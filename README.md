@@ -78,3 +78,14 @@ The proxy must overwrite or append `X-Forwarded-For`, and direct origin access s
 - `Server-Timing: lookup;dur=…` and `X-IPU-Cache: HIT|MISS` expose actual lookup work. Lookup timing excludes network transit and rendering; it is not a promise of end-to-end latency.
 - No request/IP logging or analytics in the application. Any reverse proxy logs are controlled by the deployment operator.
 
+## Checks
+
+```sh
+bun run typecheck
+bun test
+bunx --bun playwright install chromium
+bun run test:e2e
+```
+
+Unit/integration checks cover real MMDB results, IPv4/IPv6 validation, CIDR masking, missing/private data, TTL/LRU behavior, proxy spoofing, HTML/JSON/text contracts, bootstrap escaping and gzip negotiation. Browser checks cover theme persistence, clipboard, initial data, cache reuse, errors/retry, IPv6, no-JavaScript fallback and both themes at 320/390/768/1440px. Browser checks use a separate local server on port 3011; build first.
+
