@@ -26,7 +26,7 @@ Uses the same database files, mounted read-only.
 docker compose up -d --build --wait
 ```
 
-Set `IPU_PORT=3300` if port 3000 is already in use.
+Set `PORT=3300` if port 3000 is already in use. `HOST` controls the host bind address; the container listens on port 3000.
 
 ## API
 

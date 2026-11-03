@@ -7,7 +7,7 @@ services:
     init: true
     restart: unless-stopped
     ports:
-      - "${IPU_BIND_ADDRESS:-0.0.0.0}:${IPU_PORT:-3000}:3000"
+      - "${HOST:-0.0.0.0}:${PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
@@ -18,7 +18,7 @@ services:
       WEBMCP_ORIGIN_TRIAL_TOKEN: "${WEBMCP_ORIGIN_TRIAL_TOKEN:-}"
     volumes:
       - type: bind
-        source: "${IPU_DATABASE_DIR:-./assets}"
+        source: ./assets
         target: /app/assets
         read_only: true
         bind:
