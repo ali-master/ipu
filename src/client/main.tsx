@@ -677,6 +677,25 @@ function App() {
           <p>
             IPU · U means you. <a href="#lookup">Back to your address ↑</a>
           </p>
+          <div className="footer-credit">
+            <span>
+              Made by <strong>Ali Torki</strong>
+            </span>
+            <a
+              href="https://linkedin.com/in/alitorki"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
+            <a
+              href="https://github.com/ali-master"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </footer>
     </>
