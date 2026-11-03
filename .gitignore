@@ -40,3 +40,10 @@ yarn-error.log*
 **/*.log
 package-lock.json
 **/*.bun
+/dist/
+/test-results/
+/playwright-report/
+/.taste-skill/
+/.env
+/venv/
+/assets/*.mmdb
