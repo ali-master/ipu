@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ipu.usestrict.dev/sitemap.xml

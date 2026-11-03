@@ -1,4 +1,5 @@
 import guide from "./content/api.md" with { type: "text" };
+import robots from "../public/robots.txt" with { type: "text" };
 import { openapi } from "./openapi";
 
 export const siteURL = "https://ipu.usestrict.dev";
@@ -105,7 +106,7 @@ export const documents = new Map([
     "/robots.txt",
     {
       type: "text/plain; charset=utf-8",
-      body: `User-agent: *\nAllow: /\n\nSitemap: ${siteURL}/sitemap.xml\n`,
+      body: robots,
     },
   ],
   [

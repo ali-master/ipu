@@ -11,3 +11,5 @@
 !assets/
 !assets/logo.svg
 !assets/social-preview.png
+!public/
+!public/robots.txt

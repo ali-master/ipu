@@ -72,6 +72,7 @@ describe("Search and agent discovery", () => {
       [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]),
     ).toEqual([`${siteURL}/`, `${siteURL}/docs`]);
     const robots = await (await get("/robots.txt")).text();
+    expect(robots).toBe(await Bun.file("public/robots.txt").text());
     expect(robots).toContain("User-agent: *\nAllow: /");
     expect(robots).toContain(`${siteURL}/sitemap.xml`);
     expect((await get("/docs.md")).headers.get("link")).toContain(
