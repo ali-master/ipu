@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
+import { JsonCode } from "@/components/json-code";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { IPInfo, LookupResult } from "../shared";
@@ -539,10 +540,12 @@ function App() {
               <TabsContent value="json">
                 <div className="json-panel" data-ui>
                   <div>
-                    <span>application/json</span>
+                    <span className="json-title">
+                      <Braces size={17} /> application/json
+                    </span>
                     <CopyButton value={json ?? "{}"} label="Copy JSON" />
                   </div>
-                  <pre tabIndex={0}>{json ?? "Loading…"}</pre>
+                  <JsonCode value={json ?? "null"} />
                 </div>
               </TabsContent>
             </Tabs>

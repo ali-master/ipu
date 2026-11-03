@@ -668,9 +668,23 @@ dl {
   min-height: 36px;
 }
 .json-panel {
+  --json-key: #285b94;
+  --json-string: #306c4b;
+  --json-number: #995222;
+  --json-boolean: #805093;
+  --json-null: #98604c;
   background: var(--surface);
-  padding: 24px;
+  padding: 0;
   border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.dark .json-panel {
+  --json-key: #9cc9ee;
+  --json-string: #b9ce8c;
+  --json-number: #eab77e;
+  --json-boolean: #c5ade5;
+  --json-null: #d9a396;
 }
 .json-panel > div {
   display: flex;
@@ -678,13 +692,68 @@ dl {
   align-items: center;
   font-size: 13px;
   color: var(--muted-foreground);
+  padding: 12px 20px;
+  background: var(--raised);
+  border-bottom: 1px solid var(--border);
+}
+.json-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.json-title svg {
+  color: var(--brass);
 }
 .json-panel pre {
-  margin: 12px 0 0;
+  margin: 0;
+  padding: 18px 0;
   font-size: 13px;
-  line-height: 1.8;
-  overflow-x: auto;
+  line-height: 1.9;
+  overflow: auto;
   max-height: 460px;
+  tab-size: 2;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.json-panel code {
+  display: block;
+  min-width: max-content;
+}
+.json-line {
+  display: block;
+  padding-right: 24px;
+}
+.json-line:hover {
+  background: var(--raised);
+}
+.json-line-number {
+  display: inline-block;
+  width: 4.5em;
+  padding-right: 1.5em;
+  text-align: right;
+  user-select: none;
+  color: var(--muted-foreground);
+}
+.json-line-number::before {
+  content: attr(data-line);
+}
+.json-key {
+  color: var(--json-key);
+}
+.json-string {
+  color: var(--json-string);
+}
+.json-number {
+  color: var(--json-number);
+}
+.json-boolean {
+  color: var(--json-boolean);
+}
+.json-null {
+  color: var(--json-null);
+}
+.json-punctuation {
+  color: var(--muted-foreground);
 }
 .developer-section {
   background: var(--surface);
@@ -1073,7 +1142,7 @@ dl {
     min-height: 44px;
   }
   .json-panel {
-    padding: 16px;
+    padding: 0;
   }
   .json-panel pre {
     font-size: 11px;
