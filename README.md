@@ -28,3 +28,31 @@ Database provenance, build dates, download sources and checksums are in [assets/
 
 The `network` field is the matching City database CIDR, falling back to the ASN database CIDR if there is no City record. `network_source` states which database supplied it. It is **not** a live BGP route. Coordinates are approximate; `accuracy_radius` is in kilometers. Missing fields remain `null`, and local/reserved addresses are never assigned a fabricated location.
 
+## HTTP API
+
+| Endpoint   | Result                                                                  |
+| ---------- | ----------------------------------------------------------------------- |
+| `/`        | Browser UI for `Accept: text/html`; otherwise a full plain-text summary |
+| `/ip`      | Caller IP only                                                          |
+| `/json`    | Full JSON, with timing/cache metadata                                   |
+| `/country` | Country name                                                            |
+| `/network` | Matching network CIDR                                                   |
+| `/asn`     | ASN number                                                              |
+| `/<ip>`    | Look up an IPv4 or IPv6 address; HTML, JSON or text by `Accept`         |
+| `/health`  | Readiness after databases and assets load                               |
+
+Focused endpoints also accept `?ip=<address>`. Plain-text endpoints print `Unavailable` for a missing value. Invalid query IPs return HTTP 400; unknown paths return 404; unresolved client addresses return 503. Only GET and HEAD are supported.
+
+```sh
+curl localhost:3000
+curl localhost:3000/ip
+curl localhost:3000/json
+curl localhost:3000/88.198.53.22
+curl 'localhost:3000/json?ip=2606:4700:4700::1111'
+curl -H 'Accept: application/json' localhost:3000/1.1.1.1
+wget -qO- localhost:3000/country
+http localhost:3000/json
+```
+
+JSON fields: `ip`, `network`, `network_source`, `continent`, `country`, `country_code`, `region`, `city`, `timezone`, `latitude`, `longitude`, `accuracy_radius`, `asn`, `asn_organization`, `private_address`, `ipv6`, `address_type`, `database`, and `meta` (`cached`, `lookup_ms`). IPv4-mapped IPv6 is normalized to IPv4. `private_address` includes private/unique-local, loopback and link-local addresses; other reserved ranges have their own `address_type`.
+
