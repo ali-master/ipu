@@ -294,3 +294,69 @@ h1 {
 .identity-meta span + span {
   color: var(--brass);
 }
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  max-width: 490px;
+}
+.search-form input {
+  height: 52px;
+  padding: 0 64px 0 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 15px;
+}
+.search-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+.search-button {
+  position: absolute;
+  right: 7px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 4px;
+}
+.search-button:hover {
+  transform: translateX(2px);
+}
+.search-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  max-width: 490px;
+  margin-top: 6px;
+}
+.search-options button {
+  min-height: 36px;
+  color: var(--foreground);
+}
+.search-options > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.search-options button:hover {
+  color: var(--brass);
+}
+.feedback {
+  min-height: 20px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  margin-top: 0;
+}
+.feedback.error {
+  color: var(--destructive);
+  font-size: 14px;
+}
