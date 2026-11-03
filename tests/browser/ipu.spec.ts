@@ -1,5 +1,57 @@
 import { expect, test } from "@playwright/test";
 
+test("lookup URLs follow successful results, cache, history and reload", async ({ page }) => {
+  const original = "88.198.53.22";
+  const ipv6 = "2a09:bac5:4e3b:2705::3e3:24";
+  await page.goto(`/${original}#developers`);
+  await page.getByLabel("IP address to look up").fill(ipv6);
+  await page.getByRole("button", { name: "Look up IP", exact: true }).click();
+  await expect(page).toHaveURL(`/${ipv6}`);
+  await expect(page.locator(".ip-address")).toContainText(ipv6);
+  await page.goBack();
+  await expect(page).toHaveURL(`/${original}#developers`);
+  await expect(page.locator(".ip-address")).toContainText(original);
+  await page.goForward();
+  await expect(page).toHaveURL(`/${ipv6}`);
+  await expect(page.locator(".ip-address")).toContainText(ipv6);
+  await page.reload();
+  await expect(page.locator(".ip-address")).toContainText(ipv6);
+  await page.getByLabel("IP address to look up").fill("invalid");
+  await page.getByRole("button", { name: "Look up IP", exact: true }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page).toHaveURL(`/${ipv6}`);
+  await page.getByRole("button", { name: "My IP", exact: true }).click();
+  await expect(page).toHaveURL("/");
+  await expect(page.locator(".identity-label")).toContainText("Your connection");
+  await page.getByRole("button", { name: "1.1.1.1", exact: true }).click();
+  await expect(page).toHaveURL("/1.1.1.1");
+});
+
+test("IP text fits one line after lookup and live viewport changes", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/2a09:bac5:4e3b:2705::3e3:24");
+  await page.evaluate(() => document.fonts.ready);
+  const address = page.locator(".ip-address > span");
+  for (const ip of ["2a09:bac5:4e3b:2705::3e3:24", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "88.198.53.22"]) {
+    await page.getByLabel("IP address to look up").fill(ip);
+    await page.getByRole("button", { name: "Look up IP", exact: true }).click();
+    await expect(address).toHaveText(ip);
+    for (const width of [1877, 1101, 768, 390, 320, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect.poll(() => address.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const text = range.getBoundingClientRect();
+        const box = element.getBoundingClientRect();
+        const copy = element.parentElement!.querySelector("button")!.getBoundingClientRect();
+        return range.getClientRects().length === 1 &&
+          text.width <= box.width + .5 && text.right < copy.left &&
+          document.documentElement.scrollWidth <= innerWidth;
+      })).toBe(true);
+    }
+  }
+});
+
 test("logo motion replays without layout shifts and respects reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/88.198.53.22");

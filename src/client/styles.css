@@ -245,6 +245,9 @@ h1 {
   margin: 12px 0 20px;
   color: var(--muted-foreground);
 }
+.identity {
+  min-width: 0;
+}
 .identity-label {
   display: flex;
   gap: 9px;
@@ -278,11 +281,15 @@ h1 {
   font-variant-numeric: tabular-nums;
 }
 .ip-address > span {
-  overflow-wrap: anywhere;
+  flex: 1;
+  white-space: nowrap;
+  letter-spacing: -0.05em;
   min-width: 0;
 }
 .ip-address.is-v6 {
   font-size: clamp(25px, 2.6vw, 37px);
+}
+.ip-address.is-v6 > span {
   letter-spacing: -0.035em;
 }
 .ip-address button {

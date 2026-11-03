@@ -2,6 +2,7 @@ import {
   lazy,
   Suspense,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type FormEvent,
@@ -104,17 +105,60 @@ function App() {
       !new URLSearchParams(location.search).has("ip"),
   );
   const controller = useRef<AbortController | null>(null);
+  const addressText = useRef<HTMLSpanElement>(null);
   const data = result?.data;
 
-  async function lookup(ip = "", force = false) {
+  useLayoutEffect(() => {
+    const element = addressText.current!;
+    let disposed = false;
+    let measuredWidth = -1;
+    const fit = () => {
+      if (disposed || !element.clientWidth) return;
+      measuredWidth = element.clientWidth;
+      const maximum = parseFloat(getComputedStyle(element.parentElement!).fontSize);
+      element.style.fontSize = `${maximum}px`;
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      const width = range.getBoundingClientRect().width;
+      if (width > measuredWidth) {
+        element.style.fontSize = `${Math.floor(maximum * (measuredWidth - 1) / width * 100) / 100}px`;
+      }
+    };
+    const observer = new ResizeObserver(() => {
+      if (element.clientWidth !== measuredWidth) fit();
+    });
+    observer.observe(element);
+    fit();
+    void document.fonts.ready.then(fit);
+    document.fonts.addEventListener("loadingdone", fit);
+    window.addEventListener("resize", fit);
+    return () => {
+      disposed = true;
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", fit);
+      window.removeEventListener("resize", fit);
+    };
+  }, [data?.ip]);
+
+  function showResult(next: LookupResult, self: boolean, updateURL: boolean) {
+    setResult(next);
+    setViewingSelf(self);
+    if (updateURL) {
+      const path = self ? "/" : `/${next.data.ip}`;
+      if (location.pathname + location.search + location.hash !== path) {
+        history.pushState(null, "", path);
+      }
+    }
+  }
+
+  async function lookup(ip = "", force = false, updateURL = true) {
     controller.current?.abort();
     const active = new AbortController();
     controller.current = active;
     setError("");
     const cached = memory.get(ip.trim().toLowerCase());
     if (!force && cached && cached.expires > Date.now()) {
-      setResult(cached.value);
-      setViewingSelf(false);
+      showResult(cached.value, !ip, updateURL);
       setLoading(false);
       return;
     }
@@ -125,6 +169,7 @@ function App() {
         { signal: active.signal, headers: { Accept: "application/json" } },
       );
       const payload = await response.json();
+      if (active.signal.aborted) return;
       if (!response.ok)
         throw new Error(payload.error ?? "Lookup failed. Please try again.");
       const { meta, ...nextData } = payload as IPInfo & {
@@ -133,8 +178,7 @@ function App() {
       const next = { data: nextData, meta };
       if (memory.size >= 100) memory.delete(memory.keys().next().value!);
       memory.set(nextData.ip, { value: next, expires: Date.now() + 300_000 });
-      setResult(next);
-      setViewingSelf(!ip);
+      showResult(next, !ip, updateURL);
     } catch (err) {
       if (!active.signal.aborted)
         setError(
@@ -148,7 +192,17 @@ function App() {
   }
   useEffect(() => {
     if (!initial) void lookup();
-    return () => controller.current?.abort();
+    const restore = () => {
+      const ip = new URLSearchParams(location.search).get("ip") ??
+        decodeURIComponent(location.pathname.slice(1));
+      setQuery(ip);
+      void lookup(ip, false, false);
+    };
+    window.addEventListener("popstate", restore);
+    return () => {
+      controller.current?.abort();
+      window.removeEventListener("popstate", restore);
+    };
   }, []);
   useEffect(() => {
     const media = matchMedia("(prefers-color-scheme: dark)");
@@ -228,7 +282,7 @@ function App() {
                   </span>
                 </div>
                 <div className={`ip-address ${data?.ipv6 ? "is-v6" : ""}`}>
-                  <span>{data?.ip ?? "Finding you…"}</span>
+                  <span ref={addressText}>{data?.ip ?? "Finding you…"}</span>
                   {data && (
                     <CopyButton value={data.ip} label="Copy IP address" compact />
                   )}
