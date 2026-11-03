@@ -5,3 +5,43 @@
 <p align="center"><a href="https://ipu.usestrict.dev">ipu.usestrict.dev</a></p>
 
 **U means you.** Discover your IP address, network and approximate location in an instant.
+
+## Run
+
+Requires **Bun 1.4.4+**. Place `GeoLite2-City-2026-06-05.mmdb` in `assets/`; add `GeoLite2-ASN.mmdb` for ASN details. See [database sources](assets/README.md).
+
+```sh
+bun install --frozen-lockfile
+bun run build
+bun start
+```
+
+For configuration, see [.env.example](.env.example). Behind a reverse proxy, set `TRUSTED_PROXIES` to its actual IPs/CIDRs.
+
+## Docker
+
+Uses the same database files, mounted read-only.
+
+```sh
+docker compose up -d --build --wait
+```
+
+Set `IPU_PORT=3300` if port 3000 is already in use.
+
+## API
+
+```sh
+curl ipu.usestrict.dev/ip
+curl ipu.usestrict.dev/json
+curl ipu.usestrict.dev/1.1.1.1/json
+```
+
+Also supports `/country`, `/network`, `/asn` and `/<ip>/<endpoint>`. IPv4 and IPv6 work; `/health` reports readiness. Location is approximate, and missing data stays `null`.
+
+## Checks
+
+```sh
+bun check
+bun fmt --check
+bun test
+```
