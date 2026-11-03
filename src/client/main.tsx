@@ -676,7 +676,7 @@ function App() {
                 ))}
               </div>
               <p className="terminal-note">
-                Use /json?ip=1.1.1.1 for a specific address as JSON.
+                Use /1.1.1.1/json or /json?ip=1.1.1.1 for a specific address.
               </p>
             </div>
           </div>

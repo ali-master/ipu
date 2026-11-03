@@ -60,20 +60,31 @@ export function createApp(options: {
         ? new Response(null, { headers })
         : Response.json({ status: "ok" }, { headers });
     const routes = ["/", "/json", "/ip", "/country", "/network", "/asn"];
+    let route = url.pathname;
+    let knownRoute = routes.includes(route);
     let explicit: string | null = null;
     try {
-      if (!routes.includes(url.pathname))
-        explicit = normalizeIP(decodeURIComponent(url.pathname.slice(1)));
-      else if (url.searchParams.has("ip"))
+      if (!knownRoute) {
+        const parts = url.pathname.slice(1).split("/");
+        if (parts.length === 2 && parts[1] && routes.includes(`/${parts[1]}`)) {
+          route = `/${parts[1]}`;
+          knownRoute = true;
+        } else if (parts.length === 1) {
+          route = "/";
+        } else {
+          throw new Error("Unknown endpoint.");
+        }
+        explicit = normalizeIP(decodeURIComponent(parts[0]!));
+      } else if (url.searchParams.has("ip"))
         explicit = normalizeIP(url.searchParams.get("ip")!);
     } catch {
       return Response.json(
         {
-          error: routes.includes(url.pathname)
+          error: knownRoute
             ? "Enter a valid IPv4 or IPv6 address."
             : "Unknown endpoint or invalid IP address.",
         },
-        { status: routes.includes(url.pathname) ? 400 : 404, headers },
+        { status: knownRoute ? 400 : 404, headers },
       );
     }
     const ip = explicit ?? options.clientIP(request);
@@ -90,10 +101,7 @@ export function createApp(options: {
     headers.set("X-IPU-Cache", result.meta.cached ? "HIT" : "MISS");
     const accepts = request.headers.get("accept") ?? "";
     const browser = accepts.includes("text/html");
-    if (
-      (url.pathname === "/" || (explicit && !routes.includes(url.pathname))) &&
-      browser
-    ) {
+    if (route === "/" && browser) {
       const bootstrap = JSON.stringify(result).replace(/</g, "\\u003c");
       headers.set("Content-Type", "text/html; charset=utf-8");
       headers.set(
@@ -107,7 +115,7 @@ export function createApp(options: {
         { headers },
       );
     }
-    if (url.pathname === "/json" || accepts.includes("application/json")) {
+    if (route === "/json" || accepts.includes("application/json")) {
       headers.set("Content-Type", "application/json; charset=utf-8");
       return new Response(
         request.method === "HEAD"
@@ -122,7 +130,7 @@ export function createApp(options: {
       "/network": "network",
       "/asn": "asn",
     };
-    const field = fields[url.pathname];
+    const field = fields[route];
     headers.set("Content-Type", "text/plain; charset=utf-8");
     return new Response(
       request.method === "HEAD"

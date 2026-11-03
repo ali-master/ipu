@@ -45,11 +45,16 @@ The `network` field is the matching City database CIDR, falling back to the ASN 
 
 Focused endpoints also accept `?ip=<address>`. Plain-text endpoints print `Unavailable` for a missing value. Invalid query IPs return HTTP 400; unknown paths return 404; unresolved client addresses return 503. Only GET and HEAD are supported.
 
+Every lookup endpoint also supports an IP prefix: `/<ip>/json`, `/<ip>/ip`, `/<ip>/country`, `/<ip>/network`, and `/<ip>/asn`. IPv4 and IPv6 are accepted, including percent-encoded IPv6. The path IP takes precedence over `?ip=`. Invalid IPs on these endpoint paths return 400; unknown suffixes return 404. `/health` remains a service readiness endpoint.
+
 ```sh
 curl localhost:3000
 curl localhost:3000/ip
 curl localhost:3000/json
 curl localhost:3000/88.198.53.22
+curl localhost:3000/1.1.1.1/json
+curl localhost:3000/88.198.53.22/network
+curl 'localhost:3000/2606:4700:4700::1111/asn'
 curl 'localhost:3000/json?ip=2606:4700:4700::1111'
 curl -H 'Accept: application/json' localhost:3000/1.1.1.1
 wget -qO- localhost:3000/country

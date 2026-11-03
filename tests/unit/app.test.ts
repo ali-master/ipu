@@ -11,6 +11,52 @@ const app = createApp({
 const get = (path: string, headers?: Record<string, string>) =>
   app.handle(new Request(`http://localhost${path}`, { headers }));
 describe("HTTP contract", () => {
+  test("IP-prefixed endpoints match query lookups for IPv4 and IPv6", async () => {
+    for (const ip of ["1.1.1.1", "2606:4700:4700::1111", "127.0.0.1"]) {
+      for (const endpoint of ["json", "ip", "country", "network", "asn"]) {
+        const path = `/${encodeURIComponent(ip)}/${endpoint}`;
+        const response = await get(path, { accept: "text/html" });
+        const query = await get(`/${endpoint}?ip=${encodeURIComponent(ip)}`);
+        expect(response.status).toBe(200);
+        expect(response.headers.get("content-type")).toBe(
+          query.headers.get("content-type"),
+        );
+        expect(response.headers.get("cache-control")).toBe("private, no-store");
+        if (endpoint === "json") {
+          const { meta: _meta, ...actual } = await response.json();
+          const { meta: _queryMeta, ...expected } = await query.json();
+          expect(actual).toEqual(expected);
+        } else {
+          expect(await response.text()).toBe(await query.text());
+        }
+        const head = await app.handle(
+          new Request(`http://localhost${path}`, { method: "HEAD" }),
+        );
+        expect(head.status).toBe(200);
+        expect(await head.text()).toBe("");
+      }
+    }
+    expect((await (await get("/1.1.1.1/json?ip=8.8.8.8")).json()).ip).toBe(
+      "1.1.1.1",
+    );
+    expect(
+      (
+        await (
+          await get("/1.1.1.1/country", { accept: "application/json" })
+        ).json()
+      ).ip,
+    ).toBe("1.1.1.1");
+    for (const path of ["/nope/json", "/%E0%A4%A/ip", "/127.1/asn"]) {
+      expect((await get(path)).status).toBe(400);
+    }
+    for (const path of [
+      "/1.1.1.1/missing",
+      "/1.1.1.1/health",
+      "/1.1.1.1/json/extra",
+    ]) {
+      expect((await get(path)).status).toBe(404);
+    }
+  });
   test("curl root returns full readable summary", async () => {
     const response = await get("/");
     expect(response.headers.get("content-type")).toContain("text/plain");
