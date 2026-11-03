@@ -44,6 +44,36 @@ Lookups use a temporary in-process cache. Responses use `Cache-Control: private,
 
 ## Discovery
 
+### WebMCP browser tools
+
+On the interactive page, supported browsers expose two native `document.modelContext` tools:
+
+| Tool                 | Input                         | Behavior                                                                                                                                       |
+| -------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lookup_ip`          | `{ "ip": "8.8.8.8" }` or `{}` | Looks up an address and updates the search field, results, globe and URL. Omit `ip` for this browser's connection, including its proxy or VPN. |
+| `get_current_result` | `{}`                          | Reads the displayed result without a request or page change; returns `busy` during a pending lookup.                                           |
+
+Results are JSON strings: `{ "ok": true, "connection": false, "location_is_approximate": true, "data": { ... }, "meta": { ... } }`, or `{ "ok": false, "error": { "code": "invalid_ip", "message": "..." } }`. `connection: true` means the browser's connection; false means an explicitly searched address. Missing fields remain `null`. After a failed search, the previous successful result remains displayed and readable.
+
+WebMCP uses the same validation, cache and lookup flow as the UI. It accepts IP addresses, never arbitrary URLs. The latest lookup wins; a newer user/agent request cancels the previous one. Cancellation is honored until the result is committed to React and the URL, with a 15-second request timeout. Success confirms that commit; cancelling afterward does not undo it.
+
+Registration is feature-detected and rolled back as a batch on failure. Tools are removed on unmount and are restricted to the same origin with `Permissions-Policy: tools=(self)`. Geolocation outputs carry `untrustedContentHint`; lookup declares its page changes and is non-consequential, while reading the displayed result is read-only. No SDK, extension or remote MCP server is required by IPU.
+
+For local testing, enable `chrome://flags/#enable-webmcp-testing` and relaunch a supporting Chrome build. In DevTools on the interactive page:
+
+```js
+const context = document.modelContext;
+const tools = await context.getTools();
+const lookup = tools.find((tool) => tool.name === "lookup_ip");
+JSON.parse(await context.executeTool(lookup, { ip: "8.8.8.8" }));
+```
+
+WebMCP remains experimental. To participate in Chrome's origin trial on your deployed HTTPS origin, obtain a matching token and set `WEBMCP_ORIGIN_TRIAL_TOKEN`; IPU sends it in the `Origin-Trial` header on interactive HTML responses. Invalid or expired tokens do not enable the feature. Without browser support, the UI, HTTP API and Markdown guide continue to work. WebMCP tools require an open page; server-side agents can use `/{ip}/json` directly.
+
+Implementation reference (checked November 3, 2026): [Chrome Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api), [best practices](https://developer.chrome.com/docs/ai/webmcp/best-practices), [tool security](https://developer.chrome.com/docs/ai/webmcp/secure-tools), and [origin trials](https://developer.chrome.com/docs/web-platform/origin-trials).
+
+### HTTP discovery
+
 - [OpenAPI schema](https://ipu.usestrict.dev/openapi.json)
 - [Compact agent index](https://ipu.usestrict.dev/llms.txt)
 - [IPU home](https://ipu.usestrict.dev/)

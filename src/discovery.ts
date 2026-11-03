@@ -127,6 +127,8 @@ export const documents = new Map([
 Use GET ${siteURL}/{ip}/json for a full lookup. For a single field use /{ip}/ip, /{ip}/country, /{ip}/network or /{ip}/asn. Without an explicit IP, results describe the caller's connection, not the end user's device. Missing JSON values are null; location is approximate.
 
 ## Reference
+With a supporting browser and the interactive page open, WebMCP exposes lookup_ip (optional ip; omitted means this browser's connection) and get_current_result (displayed data without a request). For server-side automation, use the HTTP API above.
+
 - [API guide](${siteURL}/docs.md): Endpoints, response fields, errors and caching.
 - [OpenAPI](${siteURL}/openapi.json): Machine-readable request and response schemas.
 - [Website](${siteURL}/): Interactive lookup and API examples.
