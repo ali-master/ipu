@@ -852,3 +852,56 @@ dl {
 .detail-panel:nth-child(3) {
   animation-delay: 0.16s;
 }
+@media (max-width: 1100px) {
+  .frame {
+    width: calc(100% - 64px);
+  }
+  .connection-overview {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    column-gap: 24px;
+  }
+  .hero-copy {
+    display: block;
+  }
+  .lookup-controls .search-form {
+    margin-top: 16px;
+  }
+  h1 {
+    font-size: 36px;
+  }
+  .globe-hint {
+    display: none;
+  }
+  .details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .traits-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+  }
+  .traits-panel .panel-heading {
+    grid-column: 1;
+    margin-bottom: 8px;
+  }
+  .traits-panel dl {
+    grid-column: 1;
+  }
+  .privacy-note {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    margin-top: 0;
+    align-self: center;
+  }
+  .developer-grid {
+    gap: 40px;
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+  .terminal-panel {
+    padding: 20px;
+  }
+  .endpoint-list a {
+    grid-template-columns: 75px 1fr 14px;
+  }
+}
