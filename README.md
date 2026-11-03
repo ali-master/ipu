@@ -38,6 +38,8 @@ curl ipu.usestrict.dev/1.1.1.1/json
 
 Also supports `/country`, `/network`, `/asn` and `/<ip>/<endpoint>`. IPv4 and IPv6 work; `/health` reports readiness. Location is approximate, and missing data stays `null`.
 
+[API reference](https://ipu.usestrict.dev/docs) · [OpenAPI](https://ipu.usestrict.dev/openapi.json) · [Agent guide](https://ipu.usestrict.dev/llms.txt)
+
 ## Checks
 
 ```sh
