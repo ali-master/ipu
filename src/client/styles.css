@@ -1112,3 +1112,28 @@ dl {
     min-height: 40px;
   }
 }
+@media (max-width: 360px) {
+  .brand-caption {
+    display: none;
+  }
+  .header nav {
+    margin-left: auto;
+  }
+  .globe-hint {
+    display: none;
+  }
+  .detail-panel {
+    padding: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
