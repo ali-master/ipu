@@ -408,8 +408,33 @@ h1 {
   color: var(--brass);
 }
 .globe-wrap {
+  position: relative;
   aspect-ratio: 1;
   width: 100%;
+}
+.globe-surface {
+  width: 100%;
+  height: 100%;
+}
+.globe-beacon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+.globe-beacon > span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px;
+  border: 1.5px solid var(--brass);
+  border-radius: 50%;
+  opacity: 0;
+}
+.globe-wrap > .globe-fallback {
+  position: absolute;
+  inset: 0;
 }
 .globe-canvas {
   width: 100%;
