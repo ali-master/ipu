@@ -15,6 +15,7 @@ services:
       MAXMIND_CITY_DB: "${MAXMIND_CITY_DB:-assets/GeoLite2-City-2026-06-05.mmdb}"
       MAXMIND_ASN_DB: "${MAXMIND_ASN_DB:-assets/GeoLite2-ASN.mmdb}"
       TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
+      WEBMCP_ORIGIN_TRIAL_TOKEN: "${WEBMCP_ORIGIN_TRIAL_TOKEN:-}"
     volumes:
       - type: bind
         source: "${IPU_DATABASE_DIR:-./assets}"

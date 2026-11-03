@@ -30,6 +30,7 @@ async function start() {
     lookup,
     html: await Bun.file("dist/index.html").text(),
     assets,
+    originTrialToken: Bun.env.WEBMCP_ORIGIN_TRIAL_TOKEN,
     clientIP: (request) =>
       resolve(request, app.server?.requestIP(request)?.address ?? null),
   });

@@ -19,6 +19,7 @@ export function createApp(options: {
   lookup: Lookup;
   clientIP: (request: Request) => string | null;
   html: string;
+  originTrialToken?: string;
   assets?: Map<string, { body: Blob; gzip: Blob }>;
 }) {
   return new Elysia().all("/*", ({ request }) => {
@@ -30,6 +31,7 @@ export function createApp(options: {
       "X-Robots-Tag": "noindex",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
+      "Permissions-Policy": "tools=(self)",
     });
     if (request.method !== "GET" && request.method !== "HEAD")
       return new Response("Method not allowed\n", {
@@ -125,6 +127,8 @@ export function createApp(options: {
       headers.set("X-IPU-Cache", result.meta.cached ? "HIT" : "MISS");
     }
     if (route === "/" && browser) {
+      if (options.originTrialToken)
+        headers.set("Origin-Trial", options.originTrialToken);
       if (!explicit && !url.search) headers.delete("X-Robots-Tag");
       const bootstrap = JSON.stringify(result).replace(/</g, "\\u003c");
       headers.set("Content-Type", "text/html; charset=utf-8");

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -29,6 +30,8 @@ import { JsonCode } from "@/components/json-code";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { IPInfo, LookupResult } from "../shared";
+import { normalizeIP } from "../ip";
+import { lookupError, registerIPUTools, type LookupOutcome } from "./webmcp";
 
 const Globe = lazy(() => import("./globe"));
 const boot = document.getElementById("ipu-data")?.textContent;
@@ -106,6 +109,7 @@ function App() {
       !new URLSearchParams(location.search).has("ip"),
   );
   const controller = useRef<AbortController | null>(null);
+  const displayed = useRef({ result: initial, self: viewingSelf });
   const addressText = useRef<HTMLSpanElement>(null);
   const data = result?.data;
 
@@ -181,6 +185,7 @@ function App() {
   }, [data?.ip]);
 
   function showResult(next: LookupResult, self: boolean, updateURL: boolean) {
+    displayed.current = { result: next, self };
     setResult(next);
     setViewingSelf(self);
     if (updateURL) {
@@ -191,45 +196,110 @@ function App() {
     }
   }
 
-  async function lookup(ip = "", force = false, updateURL = true) {
+  async function lookup(
+    ip = "",
+    force = false,
+    updateURL = true,
+    toolSignal?: AbortSignal,
+  ): Promise<LookupOutcome> {
+    if (toolSignal?.aborted)
+      return lookupError("cancelled", "Lookup was cancelled.");
     controller.current?.abort();
     const active = new AbortController();
     controller.current = active;
+    const signal = AbortSignal.any([
+      active.signal,
+      AbortSignal.timeout(15_000),
+      ...(toolSignal ? [toolSignal] : []),
+    ]);
     setError("");
-    const cached = memory.get(ip.trim().toLowerCase());
-    if (!force && cached && cached.expires > Date.now()) {
-      showResult(cached.value, !ip, updateURL);
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     try {
-      const response = await fetch(
-        `/json${ip ? `?ip=${encodeURIComponent(ip.trim())}` : ""}`,
-        { signal: active.signal, headers: { Accept: "application/json" } },
-      );
-      const payload = await response.json();
-      if (active.signal.aborted) return;
-      if (!response.ok)
-        throw new Error(payload.error ?? "Lookup failed. Please try again.");
-      const { meta, ...nextData } = payload as IPInfo & {
-        meta: LookupResult["meta"];
-      };
-      const next = { data: nextData, meta };
-      if (memory.size >= 100) memory.delete(memory.keys().next().value!);
-      memory.set(nextData.ip, { value: next, expires: Date.now() + 300_000 });
-      showResult(next, !ip, updateURL);
-    } catch (err) {
-      if (!active.signal.aborted)
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Connection failed. Please try again.",
+      const address = ip ? normalizeIP(ip) : "";
+      const cached = memory.get(address);
+      let next: LookupResult;
+      if (!force && cached && cached.expires > Date.now()) next = cached.value;
+      else {
+        const response = await fetch(
+          `/json${address ? `?ip=${encodeURIComponent(address)}` : ""}`,
+          { signal, headers: { Accept: "application/json" } },
         );
+        const payload = await response.json();
+        signal.throwIfAborted();
+        if (!response.ok)
+          throw new Error(payload.error ?? "Lookup failed. Please try again.");
+        const { meta, ...nextData } = payload as IPInfo & {
+          meta: LookupResult["meta"];
+        };
+        next = { data: nextData, meta };
+        if (memory.size >= 100) memory.delete(memory.keys().next().value!);
+        memory.set(nextData.ip, { value: next, expires: Date.now() + 300_000 });
+      }
+      // Cancellation is honored until this commit; success means React and the URL already agree.
+      signal.throwIfAborted();
+      flushSync(() => {
+        showResult(next, !address, updateURL);
+        setQuery(address);
+        setLoading(false);
+      });
+      return { ok: true, result: next, self: !address };
+    } catch (err) {
+      if (active.signal.aborted || toolSignal?.aborted)
+        return lookupError(
+          "cancelled",
+          "Lookup was cancelled or replaced by a newer request.",
+        );
+      const message = signal.aborted
+        ? "Lookup timed out. Please try again."
+        : err instanceof Error
+          ? err.message
+          : "Connection failed. Please try again.";
+      setError(message);
+      return lookupError(
+        message === "Enter a valid IPv4 or IPv6 address."
+          ? "invalid_ip"
+          : "lookup_failed",
+        message,
+      );
     } finally {
-      if (!active.signal.aborted) setLoading(false);
+      if (controller.current === active) {
+        controller.current = null;
+        setLoading(false);
+      }
     }
   }
+  useEffect(() => {
+    const context = document.modelContext;
+    if (!isSecureContext || typeof context?.registerTool !== "function") return;
+    const lifetime = new AbortController();
+    void registerIPUTools(
+      context,
+      {
+        lookup: (ip, signal) => lookup(ip, false, true, signal),
+        current: () => {
+          if (controller.current)
+            return lookupError(
+              "busy",
+              "A lookup is in progress. Read the result after it completes.",
+            );
+          const current = displayed.current;
+          return current.result
+            ? { ok: true, result: current.result, self: current.self }
+            : lookupError(
+                "no_result",
+                "No lookup result is available. Run lookup_ip first.",
+              );
+        },
+      },
+      lifetime.signal,
+    ).catch(() => {
+      if (!lifetime.signal.aborted)
+        console.warn(
+          "IPU WebMCP registration unavailable; browser lookup and HTTP API remain available.",
+        );
+    });
+    return () => lifetime.abort();
+  }, []);
   useEffect(() => {
     if (!initial) void lookup();
     const restore = () => {

@@ -11,6 +11,31 @@ const app = createApp({
 const get = (path: string, headers?: Record<string, string>) =>
   app.handle(new Request(`http://localhost${path}`, { headers }));
 describe("HTTP contract", () => {
+  test("WebMCP policy stays same-origin and trial tokens only reach interactive HTML", async () => {
+    const trial = createApp({
+      lookup,
+      clientIP: () => "127.0.0.1",
+      html: "__IPU_BOOTSTRAP__",
+      originTrialToken: "test-token",
+    });
+    for (const path of ["/", "/1.1.1.1"]) {
+      const response = await trial.handle(
+        new Request(`http://localhost${path}`, {
+          headers: { accept: "text/html" },
+        }),
+      );
+      expect(response.headers.get("origin-trial")).toBe("test-token");
+      expect(response.headers.get("permissions-policy")).toBe("tools=(self)");
+    }
+    expect(
+      (await trial.handle(new Request("http://localhost/json"))).headers.get(
+        "origin-trial",
+      ),
+    ).toBeNull();
+    expect(
+      (await get("/", { accept: "text/html" })).headers.get("origin-trial"),
+    ).toBeNull();
+  });
   test("IP-prefixed endpoints match query lookups for IPv4 and IPv6", async () => {
     for (const ip of ["1.1.1.1", "2606:4700:4700::1111", "127.0.0.1"]) {
       for (const endpoint of ["json", "ip", "country", "network", "asn"]) {
