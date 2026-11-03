@@ -663,3 +663,119 @@ dl {
   overflow-x: auto;
   max-height: 460px;
 }
+.developer-section {
+  background: var(--surface);
+  padding: 80px 0;
+}
+.developer-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 88px;
+  align-items: center;
+}
+.developer-copy > svg {
+  color: var(--muted-foreground);
+  margin-bottom: 24px;
+}
+.developer-copy h2 {
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1.05;
+}
+.developer-copy > p {
+  max-width: 380px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--muted-foreground);
+  margin: 24px 0;
+}
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  min-height: 44px;
+}
+.developer-copy .developer-note {
+  font-size: 12px;
+  margin-top: 20px;
+}
+.terminal-panel {
+  border-radius: 8px;
+  background: var(--terminal);
+  color: var(--terminal-ink);
+  padding: 24px;
+  min-width: 0;
+}
+.terminal-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--terminal-muted);
+  font-size: 12px;
+  margin-bottom: 24px;
+}
+.terminal-title > span:first-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.terminal-panel [data-slot="tabs-list"] {
+  background: #2d2e28;
+  color: var(--terminal-ink);
+}
+.terminal-panel [data-slot="tabs-trigger"] {
+  color: var(--terminal-muted);
+}
+.terminal-panel [data-slot="tabs-trigger"][data-state="active"] {
+  background: #42443a;
+  color: var(--terminal-ink);
+}
+.command {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #292b24;
+  padding: 12px 12px 12px 16px;
+  border-radius: 4px;
+  margin: 12px 0 20px;
+}
+.command code {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.command code > span {
+  color: #cec16a;
+}
+.command button:hover {
+  background: #42443a;
+  color: var(--terminal-ink);
+}
+.endpoint-list a {
+  display: grid;
+  grid-template-columns: 95px 1fr 14px;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 0;
+  border-bottom: 1px solid #35372e;
+  font-size: 13px;
+}
+.endpoint-list a:last-child {
+  border-bottom: 0;
+}
+.endpoint-list a > code {
+  color: #d3c56a;
+  font-size: 12px;
+}
+.endpoint-list a > span {
+  color: var(--terminal-muted);
+}
+.endpoint-list a:hover > span {
+  color: var(--terminal-ink);
+}
+.terminal-note {
+  font-size: 11px;
+  color: var(--terminal-muted);
+  margin: 16px 0 0;
+}
