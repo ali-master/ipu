@@ -6,6 +6,8 @@ Built with **Bun**, **Elysia**, **React**, **shadcn/ui**, **Tailwind CSS 4**, **
 
 ## Run
 
+Requires Bun 1.4.4 or newer.
+
 ```sh
 bun install --frozen-lockfile
 bun run build
@@ -81,11 +83,14 @@ The proxy must overwrite or append `X-Forwarded-For`, and direct origin access s
 ## Checks
 
 ```sh
-bun run typecheck
+bun check
+bun fmt --check
 bun test
 bunx --bun playwright install chromium
 bun run test:e2e
 ```
+
+Run `bun fmt` to apply formatting. Type checking and formatting use Bun's native tools; no standalone TypeScript compiler or formatter is required. `bun check` reads the project's `tsconfig.json`. `bun run typecheck`, `bun run format` and `bun run format:check` are aliases for these commands.
 
 Unit/integration checks cover real MMDB results, IPv4/IPv6 validation, CIDR masking, missing/private data, TTL/LRU behavior, proxy spoofing, HTML/JSON/text contracts, bootstrap escaping and gzip negotiation. Browser checks cover theme persistence, clipboard, initial data, cache reuse, errors/retry, IPv6, no-JavaScript fallback and both themes at 320/390/768/1440px. Browser checks use a separate local server on port 3011; build first.
 

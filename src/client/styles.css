@@ -159,17 +159,17 @@ pre:focus-visible {
 .wordmark-signal {
   display: block;
   position: absolute;
-  height: .115em;
-  width: .115em;
+  height: 0.115em;
+  width: 0.115em;
   background: var(--brass);
   border-radius: 50%;
-  left: .97em;
-  top: .22em;
+  left: 0.97em;
+  top: 0.22em;
   pointer-events: none;
 }
 .wordmark-orbit {
   position: absolute;
-  inset: -.1em -.15em;
+  inset: -0.1em -0.15em;
   border: 1px solid var(--brass);
   border-radius: 50%;
   opacity: 0;
