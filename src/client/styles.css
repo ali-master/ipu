@@ -132,3 +132,58 @@ pre:focus-visible {
 .skip-link:focus {
   top: 16px;
 }
+.header {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  gap: 28px;
+}
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 44px;
+  letter-spacing: -4px;
+  line-height: 1;
+  font-weight: 600;
+}
+.u-mark {
+  position: relative;
+}
+.u-mark > span {
+  display: block;
+  position: absolute;
+  height: 5px;
+  width: 5px;
+  background: var(--brass);
+  border-radius: 50%;
+  left: 10px;
+  top: 10px;
+}
+.wordmark-dot {
+  color: var(--brass);
+}
+.brand-caption {
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.header nav {
+  display: flex;
+  margin-left: auto;
+  gap: 32px;
+  font-size: 14px;
+}
+.header nav a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header nav a:hover,
+.text-link:hover {
+  color: var(--brass);
+}
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--raised);
+}
