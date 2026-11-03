@@ -1,0 +1,30 @@
+@import "tailwindcss" source("./");
+@font-face {
+  font-family: "Work Sans Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../node_modules/@fontsource-variable/work-sans/files/work-sans-latin-wght-normal.woff2")
+    format("woff2-variations");
+}
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Work Sans Variable", sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--brass);
+  --color-destructive: var(--destructive);
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
