@@ -1,6 +1,68 @@
 import { expect, test } from "@playwright/test";
 
-test("lookup URLs follow successful results, cache, history and reload", async ({ page }) => {
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test(`fragment targets survive direct entry and reload (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.addInitScript(() => {
+      const scrollIntoView = Element.prototype.scrollIntoView;
+      Element.prototype.scrollIntoView = function (options) {
+        if (typeof options === "object") {
+          this.setAttribute("data-scroll-behavior", options.behavior ?? "auto");
+        }
+        scrollIntoView.call(this, options);
+      };
+    });
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const id of ["developers", "details", "lookup"]) {
+        await page.goto("about:blank");
+        await page.goto(`/1.1.1.1#${id}`);
+        for (const reload of [false, true]) {
+          if (reload) {
+            await page.evaluate(() =>
+              window.scrollTo({ top: 0, behavior: "instant" }),
+            );
+            await page.reload();
+          }
+          await expect(page.locator(`#${id}`)).toHaveAttribute(
+            "data-scroll-behavior",
+            reducedMotion === "reduce" ? "instant" : "smooth",
+          );
+          await expect
+            .poll(() =>
+              page.locator(`#${id}`).evaluate((element) => {
+                const padding = parseFloat(
+                  getComputedStyle(document.documentElement).scrollPaddingTop,
+                );
+                const destination = Math.max(
+                  0,
+                  Math.min(
+                    element.getBoundingClientRect().top + scrollY - padding,
+                    document.documentElement.scrollHeight - innerHeight,
+                  ),
+                );
+                return Math.abs(scrollY - destination);
+              }),
+            )
+            .toBeLessThan(2);
+          await expect(page).toHaveURL(`/1.1.1.1#${id}`);
+        }
+      }
+    }
+    for (const hash of ["#missing", "#%E0%A4%A", ""]) {
+      await page.goto("about:blank");
+      await page.goto(`/1.1.1.1${hash}`);
+      await expect(page.locator(".ip-address")).toContainText("1.1.1.1");
+      expect(await page.evaluate(() => scrollY)).toBe(0);
+    }
+  });
+}
+
+test("lookup URLs follow successful results, cache, history and reload", async ({
+  page,
+}) => {
   const original = "88.198.53.22";
   const ipv6 = "2a09:bac5:4e3b:2705::3e3:24";
   await page.goto(`/${original}#developers`);
@@ -22,43 +84,66 @@ test("lookup URLs follow successful results, cache, history and reload", async (
   await expect(page).toHaveURL(`/${ipv6}`);
   await page.getByRole("button", { name: "My IP", exact: true }).click();
   await expect(page).toHaveURL("/");
-  await expect(page.locator(".identity-label")).toContainText("Your connection");
+  await expect(page.locator(".identity-label")).toContainText(
+    "Your connection",
+  );
   await page.getByRole("button", { name: "1.1.1.1", exact: true }).click();
   await expect(page).toHaveURL("/1.1.1.1");
 });
 
-test("IP text fits one line after lookup and live viewport changes", async ({ page }) => {
+test("IP text fits one line after lookup and live viewport changes", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/2a09:bac5:4e3b:2705::3e3:24");
   await page.evaluate(() => document.fonts.ready);
   const address = page.locator(".ip-address > span");
-  for (const ip of ["2a09:bac5:4e3b:2705::3e3:24", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "88.198.53.22"]) {
+  for (const ip of [
+    "2a09:bac5:4e3b:2705::3e3:24",
+    "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+    "88.198.53.22",
+  ]) {
     await page.getByLabel("IP address to look up").fill(ip);
     await page.getByRole("button", { name: "Look up IP", exact: true }).click();
     await expect(address).toHaveText(ip);
     for (const width of [1877, 1101, 768, 390, 320, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect.poll(() => address.evaluate((element) => {
-        const range = document.createRange();
-        range.selectNodeContents(element);
-        const text = range.getBoundingClientRect();
-        const box = element.getBoundingClientRect();
-        const copy = element.parentElement!.querySelector("button")!.getBoundingClientRect();
-        return range.getClientRects().length === 1 &&
-          text.width <= box.width + .5 && text.right < copy.left &&
-          document.documentElement.scrollWidth <= innerWidth;
-      })).toBe(true);
+      await expect
+        .poll(() =>
+          address.evaluate((element) => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const text = range.getBoundingClientRect();
+            const box = element.getBoundingClientRect();
+            const copy = element
+              .parentElement!.querySelector("button")!
+              .getBoundingClientRect();
+            return (
+              range.getClientRects().length === 1 &&
+              text.width <= box.width + 0.5 &&
+              text.right < copy.left &&
+              document.documentElement.scrollWidth <= innerWidth
+            );
+          }),
+        )
+        .toBe(true);
     }
   }
 });
 
-test("logo motion replays without layout shifts and respects reduced motion", async ({ page }) => {
+test("logo motion replays without layout shifts and respects reduced motion", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/88.198.53.22");
   const logo = page.locator(".header .wordmark");
-  const active = () => logo.evaluate((element) =>
-    element.getAnimations({ subtree: true }).filter((a) => a.playState === "running").length,
-  );
+  const active = () =>
+    logo.evaluate(
+      (element) =>
+        element
+          .getAnimations({ subtree: true })
+          .filter((a) => a.playState === "running").length,
+    );
   await expect.poll(active).toBe(6);
   await page.evaluate(() => document.fonts.ready);
   const bounds = await logo.boundingBox();
@@ -203,7 +288,9 @@ for (const width of [320, 390, 768, 1440]) {
       await expect(
         page.getByRole("button", { name: "Look up IP", exact: true }),
       ).toBeInViewport();
-      await expect(page.locator(".location-panel .panel-heading")).toBeInViewport();
+      await expect(
+        page.locator(".location-panel .panel-heading"),
+      ).toBeInViewport();
       if (width >= 1100) {
         for (const panel of await page.locator(".detail-panel").all()) {
           await expect(panel).toBeInViewport({ ratio: 1 });

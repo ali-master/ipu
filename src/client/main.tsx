@@ -108,6 +108,43 @@ function App() {
   const addressText = useRef<HTMLSpanElement>(null);
   const data = result?.data;
 
+  useEffect(() => {
+    const hash = location.hash;
+    if (!hash) return;
+    let id: string;
+    try {
+      id = decodeURIComponent(hash.slice(1));
+    } catch {
+      return;
+    }
+    let disposed = false;
+    let frame = 0;
+    void document.fonts.ready.then(async () => {
+      if (disposed) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      await Promise.all(
+        target
+          .getAnimations()
+          .map((animation) => animation.finished.catch(() => {})),
+      );
+      if (disposed) return;
+      frame = requestAnimationFrame(() => {
+        if (location.hash !== hash) return;
+        target.scrollIntoView({
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "instant"
+            : "smooth",
+          block: "start",
+        });
+      });
+    });
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const element = addressText.current!;
     let disposed = false;
@@ -115,13 +152,15 @@ function App() {
     const fit = () => {
       if (disposed || !element.clientWidth) return;
       measuredWidth = element.clientWidth;
-      const maximum = parseFloat(getComputedStyle(element.parentElement!).fontSize);
+      const maximum = parseFloat(
+        getComputedStyle(element.parentElement!).fontSize,
+      );
       element.style.fontSize = `${maximum}px`;
       const range = document.createRange();
       range.selectNodeContents(element);
       const width = range.getBoundingClientRect().width;
       if (width > measuredWidth) {
-        element.style.fontSize = `${Math.floor(maximum * (measuredWidth - 1) / width * 100) / 100}px`;
+        element.style.fontSize = `${Math.floor(((maximum * (measuredWidth - 1)) / width) * 100) / 100}px`;
       }
     };
     const observer = new ResizeObserver(() => {
@@ -193,7 +232,8 @@ function App() {
   useEffect(() => {
     if (!initial) void lookup();
     const restore = () => {
-      const ip = new URLSearchParams(location.search).get("ip") ??
+      const ip =
+        new URLSearchParams(location.search).get("ip") ??
         decodeURIComponent(location.pathname.slice(1));
       setQuery(ip);
       void lookup(ip, false, false);
@@ -267,9 +307,7 @@ function App() {
         <div className="connection-overview frame">
           <section className="hero" aria-labelledby="hero-heading">
             <div className="hero-copy">
-              <h1 id="hero-heading">
-                Your place on the internet.
-              </h1>
+              <h1 id="hero-heading">Your place on the internet.</h1>
               <p className="hero-description">
                 Your IP, location, and network — already here.
               </p>
@@ -284,7 +322,11 @@ function App() {
                 <div className={`ip-address ${data?.ipv6 ? "is-v6" : ""}`}>
                   <span ref={addressText}>{data?.ip ?? "Finding you…"}</span>
                   {data && (
-                    <CopyButton value={data.ip} label="Copy IP address" compact />
+                    <CopyButton
+                      value={data.ip}
+                      label="Copy IP address"
+                      compact
+                    />
                   )}
                 </div>
                 <div className="connection-place">
@@ -302,11 +344,18 @@ function App() {
                   <span>
                     {data?.asn_organization ?? "Network provider unavailable"}
                   </span>
-                  <span>{data?.asn ? `AS${data.asn}` : data?.address_type}</span>
+                  <span>
+                    {data?.asn ? `AS${data.asn}` : data?.address_type}
+                  </span>
                 </div>
               </div>
               <div className="lookup-controls">
-                <form id="lookup" className="search-form" onSubmit={submit} data-ui>
+                <form
+                  id="lookup"
+                  className="search-form"
+                  onSubmit={submit}
+                  data-ui
+                >
                   <label className="sr-only" htmlFor="ip-query">
                     IP address to look up
                   </label>
@@ -377,7 +426,6 @@ function App() {
                 </p>
               </div>
             </div>
-
           </section>
 
           <section
@@ -410,7 +458,9 @@ function App() {
                       </span>
                       <div>
                         <strong>
-                          {data?.city ?? data?.country ?? "Location unavailable"}
+                          {data?.city ??
+                            data?.country ??
+                            "Location unavailable"}
                         </strong>
                         <span>
                           {[data?.region, data?.country]
