@@ -456,3 +456,44 @@ h1 {
   text-align: center;
   font-size: 12px;
 }
+.details-section {
+  grid-area: details;
+  min-width: 0;
+  padding-top: 16px;
+  padding-bottom: 48px;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+h2 {
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+  margin: 0;
+}
+.section-heading p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+[data-slot="tabs-list"] {
+  height: 44px !important;
+  border-radius: 6px;
+  padding: 4px;
+}
+[data-slot="tabs-trigger"] {
+  min-height: 36px;
+  padding-inline: 15px;
+  font-size: 13px;
+  border-radius: 4px;
+  box-shadow: none !important;
+}
+[data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--surface);
+  border-color: transparent;
+}
