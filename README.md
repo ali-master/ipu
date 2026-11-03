@@ -12,12 +12,12 @@ Requires Bun 1.4.4 or newer.
 bun install --frozen-lockfile
 bun run build
 bun start
-# http://localhost:3000
+# http://ipu.usestrict.dev
 ```
 
 `bun run dev` builds the frontend and watches the server. Run it again after frontend edits to rebuild the browser assets. `bun run build` uses Bun's native bundler and Tailwind plugin; no Vite or Node server is required.
 
-On localhost the visitor IP is normally `127.0.0.1` or `::1`, so public location and ASN are unavailable. Use [the supplied example IP](http://localhost:3000/88.198.53.22) to explore a real database record. On a public deployment, IPU reads the visitor's socket address automatically.
+On localhost the visitor IP is normally `127.0.0.1` or `::1`, so public location and ASN are unavailable. Use [the supplied example IP](http://ipu.usestrict.dev/88.198.53.22) to explore a real database record. On a public deployment, IPU reads the visitor's socket address automatically.
 
 ## Docker
 
@@ -25,7 +25,7 @@ Keep the MaxMind files in `assets/`, then run:
 
 ```sh
 docker compose up -d --build --wait
-curl localhost:3000/1.1.1.1/json
+curl ipu.usestrict.dev/1.1.1.1/json
 docker compose logs -f ipu
 docker compose down
 ```
@@ -67,17 +67,17 @@ Focused endpoints also accept `?ip=<address>`. Plain-text endpoints print `Unava
 Every lookup endpoint also supports an IP prefix: `/<ip>/json`, `/<ip>/ip`, `/<ip>/country`, `/<ip>/network`, and `/<ip>/asn`. IPv4 and IPv6 are accepted, including percent-encoded IPv6. The path IP takes precedence over `?ip=`. Invalid IPs on these endpoint paths return 400; unknown suffixes return 404. `/health` remains a service readiness endpoint.
 
 ```sh
-curl localhost:3000
-curl localhost:3000/ip
-curl localhost:3000/json
-curl localhost:3000/88.198.53.22
-curl localhost:3000/1.1.1.1/json
-curl localhost:3000/88.198.53.22/network
-curl 'localhost:3000/2606:4700:4700::1111/asn'
-curl 'localhost:3000/json?ip=2606:4700:4700::1111'
-curl -H 'Accept: application/json' localhost:3000/1.1.1.1
-wget -qO- localhost:3000/country
-http localhost:3000/json
+curl ipu.usestrict.dev
+curl ipu.usestrict.dev/ip
+curl ipu.usestrict.dev/json
+curl ipu.usestrict.dev/88.198.53.22
+curl ipu.usestrict.dev/1.1.1.1/json
+curl ipu.usestrict.dev/88.198.53.22/network
+curl 'ipu.usestrict.dev/2606:4700:4700::1111/asn'
+curl 'ipu.usestrict.dev/json?ip=2606:4700:4700::1111'
+curl -H 'Accept: application/json' ipu.usestrict.dev/1.1.1.1
+wget -qO- ipu.usestrict.dev/country
+http ipu.usestrict.dev/json
 ```
 
 JSON fields: `ip`, `network`, `network_source`, `continent`, `country`, `country_code`, `region`, `city`, `timezone`, `latitude`, `longitude`, `accuracy_radius`, `asn`, `asn_organization`, `private_address`, `ipv6`, `address_type`, `database`, and `meta` (`cached`, `lookup_ms`). IPv4-mapped IPv6 is normalized to IPv4. `private_address` includes private/unique-local, loopback and link-local addresses; other reserved ranges have their own `address_type`.
