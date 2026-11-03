@@ -68,3 +68,13 @@ TRUSTED_PROXIES=127.0.0.1/32,::1/128
 
 The proxy must overwrite or append `X-Forwarded-For`, and direct origin access should follow your deployment's intended boundary. IPU walks the chain from right to left and stops at the first untrusted hop; it does not trust arbitrary `CF-Connecting-IP` or `X-Real-IP` headers. Never put every public network into the trust list.
 
+## Performance and privacy
+
+- Local MMDB readers stay open in memory; no DNS or remote API calls on the lookup path.
+- Server LRU: at most **10,000 IPs**, with **one-hour validity**. Expired entries are replaced on access or evicted; the bounded cache is process-local and is cleared on restart.
+- Browser memory: at most **100 results**, valid for **five minutes**, cleared on reload. IP history is not stored in localStorage; only the theme preference is persisted.
+- The initial response embeds the resolved data, avoiding a second API round trip. The globe is a separate lazy-loaded bundle and does not block lookup. Drawing is capped at 30 fps and paused when the globe is offscreen or the tab is hidden; reduced motion freezes automatic rotation.
+- Bundled assets are fingerprinted, held in memory and gzip-compressed once at startup. They use immutable caching. IP-specific HTML/JSON/text use `private, no-store` so shared caches cannot leak another visitor's address.
+- `Server-Timing: lookup;dur=…` and `X-IPU-Cache: HIT|MISS` expose actual lookup work. Lookup timing excludes network transit and rendering; it is not a promise of end-to-end latency.
+- No request/IP logging or analytics in the application. Any reverse proxy logs are controlled by the deployment operator.
+
