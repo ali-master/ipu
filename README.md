@@ -89,3 +89,6 @@ bun run test:e2e
 
 Unit/integration checks cover real MMDB results, IPv4/IPv6 validation, CIDR masking, missing/private data, TTL/LRU behavior, proxy spoofing, HTML/JSON/text contracts, bootstrap escaping and gzip negotiation. Browser checks cover theme persistence, clipboard, initial data, cache reuse, errors/retry, IPv6, no-JavaScript fallback and both themes at 320/390/768/1440px. Browser checks use a separate local server on port 3011; build first.
 
+## Design
+
+The “product performs” direction puts the visitor's address at the center of a personal atlas. Neutral newsprint/charcoal, brass location markers, Work Sans and a real geographic globe connect the landing page to the working interface. The [GitHub homepage featured on Awwwards](https://www.awwwards.com/sites/github-homepage) informed the global-network treatment. No stock photos, invented metrics, placeholder organizations or tracking scripts are used.
