@@ -1,6 +1,14 @@
 {
-  "name": "ipu",
-  "version": "1.0.50",
+  "name": "@usex/ipu",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "author": {
+    "name": "Ali Torki",
+    "email": "ali_4286@live.com",
+    "url": "https://github.com/ali-master"
+  },
+  "homepage": "https://ip.usestrict.dev",
   "scripts": {
     "dev": "bun run build && bun --watch src/index.ts",
     "build": "bun scripts/build.ts",
