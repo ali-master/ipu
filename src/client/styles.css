@@ -139,25 +139,41 @@ pre:focus-visible {
   gap: 28px;
 }
 .wordmark {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
+  flex-shrink: 0;
   font-size: 44px;
   letter-spacing: -4px;
   line-height: 1;
   font-weight: 600;
+  perspective: 200px;
+  isolation: isolate;
 }
-.u-mark {
+.wordmark-glyph,
+.wordmark-dot {
+  display: inline-block;
   position: relative;
+  transform-origin: 50% 65%;
 }
-.u-mark > span {
+.wordmark-signal {
   display: block;
   position: absolute;
-  height: 5px;
-  width: 5px;
+  height: .115em;
+  width: .115em;
   background: var(--brass);
   border-radius: 50%;
-  left: 10px;
-  top: 10px;
+  left: .97em;
+  top: .22em;
+  pointer-events: none;
+}
+.wordmark-orbit {
+  position: absolute;
+  inset: -.1em -.15em;
+  border: 1px solid var(--brass);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
 }
 .wordmark-dot {
   color: var(--brass);

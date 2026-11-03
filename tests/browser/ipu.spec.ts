@@ -1,5 +1,34 @@
 import { expect, test } from "@playwright/test";
 
+test("logo motion replays without layout shifts and respects reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/88.198.53.22");
+  const logo = page.locator(".header .wordmark");
+  const active = () => logo.evaluate((element) =>
+    element.getAnimations({ subtree: true }).filter((a) => a.playState === "running").length,
+  );
+  await expect.poll(active).toBe(6);
+  await page.evaluate(() => document.fonts.ready);
+  const bounds = await logo.boundingBox();
+  await expect.poll(active).toBe(0);
+  await logo.hover();
+  await expect.poll(active).toBe(6);
+  expect(await logo.boundingBox()).toEqual(bounds);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(active).toBe(0);
+  await logo.focus();
+  expect(await active()).toBe(0);
+  await page.reload();
+  await expect(logo).toBeVisible();
+  expect(await active()).toBe(0);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await logo.focus();
+  await expect.poll(active).toBe(6);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await logo.click();
+  await expect(page).toHaveURL("/");
+});
+
 test("boot data, theme, live lookup, JSON, clipboard and browser cache", async ({
   page,
   context,

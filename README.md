@@ -92,3 +92,5 @@ Unit/integration checks cover real MMDB results, IPv4/IPv6 validation, CIDR mask
 ## Design
 
 The “product performs” direction puts the visitor's address at the center of a personal atlas. Neutral newsprint/charcoal, brass location markers, Work Sans and a real geographic globe connect the landing page to the working interface. The [GitHub homepage featured on Awwwards](https://www.awwwards.com/sites/github-homepage) informed the global-network treatment. No stock photos, invented metrics, placeholder organizations or tracking scripts are used.
+
+The IPU wordmark folds its letters in 3D while its brass marker orbits them. The native Web Animations API plays a short sequence on header entry, pointer entry or keyboard focus; it does not loop or shift the layout. Reduced motion disables playback, and changing that preference or hiding the tab cancels an active sequence.

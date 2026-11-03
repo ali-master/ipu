@@ -23,6 +23,7 @@ import {
   Braces,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/wordmark";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { IPInfo, LookupResult } from "../shared";
@@ -189,13 +190,7 @@ function App() {
         Skip to IP lookup
       </a>
       <header className="header frame">
-        <a href="/" className="wordmark" aria-label="IPU home">
-          ip
-          <span className="u-mark">
-            u<span />
-          </span>
-          <span className="wordmark-dot">.</span>
-        </a>
+        <Wordmark intro />
         <span className="brand-caption">IP, meet you.</span>
         <nav aria-label="Main navigation">
           <a href="#details">Your network</a>
@@ -585,9 +580,7 @@ function App() {
       </main>
       <footer className="footer frame">
         <div className="footer-brand">
-          <a href="/" className="wordmark">
-            ipu.
-          </a>
+          <Wordmark />
           <p>
             The internet is big.
             <br />
