@@ -56,3 +56,15 @@ http localhost:3000/json
 
 JSON fields: `ip`, `network`, `network_source`, `continent`, `country`, `country_code`, `region`, `city`, `timezone`, `latitude`, `longitude`, `accuracy_radius`, `asn`, `asn_organization`, `private_address`, `ipv6`, `address_type`, `database`, and `meta` (`cached`, `lookup_ms`). IPv4-mapped IPv6 is normalized to IPv4. `private_address` includes private/unique-local, loopback and link-local addresses; other reserved ranges have their own `address_type`.
 
+## Configuration and reverse proxies
+
+Copy `.env.example` to `.env` if needed; Bun loads it automatically. `HOST` defaults to `0.0.0.0`, `PORT` to `3000`. `MAXMIND_CITY_DB` and `MAXMIND_ASN_DB` override database paths.
+
+Forwarding headers are ignored by default. If a reverse proxy sits in front of IPU, set `TRUSTED_PROXIES` to the actual proxy IPs/CIDRs. For a proxy on the same machine:
+
+```dotenv
+TRUSTED_PROXIES=127.0.0.1/32,::1/128
+```
+
+The proxy must overwrite or append `X-Forwarded-For`, and direct origin access should follow your deployment's intended boundary. IPU walks the chain from right to left and stops at the first untrusted hop; it does not trust arbitrary `CF-Connecting-IP` or `X-Real-IP` headers. Never put every public network into the trust list.
+
