@@ -229,3 +229,68 @@ h1 {
   margin: 12px 0 20px;
   color: var(--muted-foreground);
 }
+.identity-label {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brass);
+}
+.ip-version {
+  font-size: 12px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  border-radius: 4px;
+  background: var(--raised);
+  color: var(--foreground);
+}
+.ip-address {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 1.25;
+  margin: 6px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ip-address > span {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.ip-address.is-v6 {
+  font-size: clamp(25px, 2.6vw, 37px);
+  letter-spacing: -0.035em;
+}
+.ip-address button {
+  color: var(--muted-foreground);
+  width: 44px;
+  height: 44px;
+}
+.connection-place {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+.connection-place svg {
+  color: var(--brass);
+}
+.identity-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  margin-top: 8px;
+}
+.identity-meta span + span {
+  color: var(--brass);
+}
