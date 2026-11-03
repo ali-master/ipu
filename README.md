@@ -19,6 +19,25 @@ bun start
 
 On localhost the visitor IP is normally `127.0.0.1` or `::1`, so public location and ASN are unavailable. Use [the supplied example IP](http://localhost:3000/88.198.53.22) to explore a real database record. On a public deployment, IPU reads the visitor's socket address automatically.
 
+## Docker
+
+Keep the MaxMind files in `assets/`, then run:
+
+```sh
+docker compose up -d --build --wait
+curl localhost:3000/1.1.1.1/json
+docker compose logs -f ipu
+docker compose down
+```
+
+If port 3000 is already used by the development server, use `IPU_PORT=3300 docker compose up -d --build --wait` and open port 3300. `IPU_BIND_ADDRESS` defaults to `0.0.0.0`; set it to `127.0.0.1` for local-only access. `IPU_DATABASE_DIR` changes the host database directory. Database paths in `MAXMIND_CITY_DB` and `MAXMIND_ASN_DB` must refer to their container location under `/app/assets` (or the equivalent relative `assets/` path).
+
+The multi-stage Dockerfile bundles the server and its dependencies with minification and cached bytecode. The final official Bun distroless image contains the runtime, server bundle and browser assets, without a shell, `node_modules`, build tools or MMDB files. Dependency installation and downloads are cached separately from source edits, and `.dockerignore` limits the build context to application inputs.
+
+Compose runs as UID/GID 65532, uses a read-only filesystem and database mount, drops Linux capabilities and checks `/health` using Bun itself. The existing process-local lookup cache and precompressed asset serving remain active. There are no installs, builds or database downloads at container startup. To update databases, replace the host files and run `docker compose restart ipu`.
+
+Forwarded IP headers still require explicit `TRUSTED_PROXIES`. Docker Desktop may present a gateway IP for direct local requests; use an explicit IP endpoint to inspect public data locally. Configure only your actual reverse proxy addresses in production.
+
 ## Databases
 
 Place these files in `assets/` (large MMDB files are ignored by Git):

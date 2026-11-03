@@ -1,0 +1,34 @@
+services:
+  ipu:
+    image: ipu:local
+    build:
+      context: .
+      target: runtime
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${IPU_BIND_ADDRESS:-0.0.0.0}:${IPU_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      MAXMIND_CITY_DB: "${MAXMIND_CITY_DB:-assets/GeoLite2-City-2026-06-05.mmdb}"
+      MAXMIND_ASN_DB: "${MAXMIND_ASN_DB:-assets/GeoLite2-ASN.mmdb}"
+      TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
+    volumes:
+      - type: bind
+        source: "${IPU_DATABASE_DIR:-./assets}"
+        target: /app/assets
+        read_only: true
+        bind:
+          create_host_path: false
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
