@@ -779,3 +779,34 @@ dl {
   color: var(--terminal-muted);
   margin: 16px 0 0;
 }
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding-block: 52px;
+  font-size: 12px;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.footer .wordmark {
+  font-size: 56px;
+}
+.footer p {
+  color: var(--muted-foreground);
+  margin: 8px 0 0;
+}
+.footer-brand p {
+  margin: 0;
+  line-height: 1.7;
+}
+.footer > div:last-child {
+  text-align: right;
+}
+.footer > div:last-child p a {
+  margin-left: 22px;
+  color: var(--foreground);
+}
