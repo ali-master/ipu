@@ -649,24 +649,6 @@ dl {
   margin: 0;
   line-height: 1.7;
 }
-.data-source {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  font-size: 11px;
-  color: var(--muted-foreground);
-  margin-top: 22px;
-}
-.data-source a,
-.data-source button {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.data-source button {
-  min-height: 36px;
-}
 .json-panel {
   --json-key: #285b94;
   --json-string: #306c4b;
@@ -1126,20 +1108,6 @@ dl {
   }
   .privacy-note p {
     font-size: 13px;
-  }
-  .data-source {
-    flex-wrap: wrap;
-    gap: 8px 16px;
-    margin-top: 18px;
-    font-size: 11px;
-  }
-  .data-source > span:nth-child(2) {
-    width: 100%;
-    order: 3;
-  }
-  .data-source button {
-    margin-left: auto;
-    min-height: 44px;
   }
   .json-panel {
     padding: 0;

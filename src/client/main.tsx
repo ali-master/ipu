@@ -549,28 +549,6 @@ function App() {
                 </div>
               </TabsContent>
             </Tabs>
-            <div className="data-source">
-              <span>
-                GeoLite2 by{" "}
-                <a
-                  href="https://www.maxmind.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  MaxMind <ArrowUpRight size={12} />
-                </a>
-              </span>
-              <span>
-                City data: {data?.database.city ?? "—"} · ASN data:{" "}
-                {data?.database.asn ?? "Unavailable"}
-              </span>
-              <button
-                onClick={() => void lookup(viewingSelf ? "" : data?.ip, true)}
-                disabled={loading}
-              >
-                <RotateCw size={13} /> Refresh lookup
-              </button>
-            </div>
           </section>
 
           <div className="globe-stage">
