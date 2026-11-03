@@ -68,3 +68,67 @@
   --terminal-ink: #e8e8df;
   --terminal-muted: #b4b7aa;
 }
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 28px;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Work Sans Variable", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.5;
+}
+button,
+input {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button:not(:disabled),
+a {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+a,
+input {
+  touch-action: manipulation;
+}
+button:focus-visible,
+a:focus-visible,
+canvas:focus-visible,
+pre:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 5px;
+}
+::selection {
+  background: var(--brass-fill);
+  color: #181916;
+}
+.frame {
+  width: min(1280px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.skip-link {
+  position: fixed;
+  left: 20px;
+  top: -70px;
+  padding: 12px 20px;
+  background: var(--foreground);
+  color: var(--background);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 16px;
+}
