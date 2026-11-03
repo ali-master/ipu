@@ -8,3 +8,6 @@
 !src/**
 !scripts/
 !scripts/build.ts
+!assets/
+!assets/logo.svg
+!assets/social-preview.png

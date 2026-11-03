@@ -18,6 +18,7 @@ describe("HTTP contract", () => {
         const response = await get(path, { accept: "text/html" });
         const query = await get(`/${endpoint}?ip=${encodeURIComponent(ip)}`);
         expect(response.status).toBe(200);
+        expect(response.headers.get("x-robots-tag")).toBe("noindex");
         expect(response.headers.get("content-type")).toBe(
           query.headers.get("content-type"),
         );
@@ -66,6 +67,12 @@ describe("HTTP contract", () => {
     const response = await get("/", { accept: "text/html" });
     expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(response.headers.get("content-type")).toContain("text/html");
+    expect(response.headers.get("x-robots-tag")).toBeNull();
+    for (const path of ["/1.1.1.1", "/?ip=1.1.1.1", "/?utm_source=test"]) {
+      expect(
+        (await get(path, { accept: "text/html" })).headers.get("x-robots-tag"),
+      ).toBe("noindex");
+    }
     const body = await response.text();
     expect(body).toContain('"ip":"88.198.53.22"');
     expect(body).not.toContain("__IPU_BOOTSTRAP__");

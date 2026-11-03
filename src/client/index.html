@@ -3,12 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="IP, meet you. Discover your IP address, network, ASN and approximate location instantly. A fast, private IP lookup for people and terminals."
-    />
+    <!-- IPU_METADATA -->
     <meta name="theme-color" content="#161715" />
-    <title>IPU — IP, meet you.</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
     <script>
@@ -27,11 +23,26 @@
     <script id="ipu-data" type="application/json">
       __IPU_BOOTSTRAP__
     </script>
-    <div id="root"></div>
-    <noscript
-      ><main style="padding: 32px; font-family: system-ui">
+    <div id="root">
+      <main
+        style="
+          max-width: 900px;
+          margin: auto;
+          padding: 32px;
+          font-family: system-ui;
+          line-height: 1.7;
+        "
+      >
         <h1>IPU — IP, meet you.</h1>
-        <p>Your network, without the guesswork.</p>
+        <p>
+          Find your IP address, network CIDR, ASN and approximate location. Look
+          up IPv4 or IPv6 with no account or API key.
+        </p>
+        <p>
+          IPU reports continent, country, region, city, timezone, coordinates
+          and accuracy radius when available. Location is approximate, never a
+          street address. Missing data stays null.
+        </p>
         <p>
           <a href="/json">View your IP and location as JSON</a> ·
           <a href="/ip">Your IP address</a>
@@ -40,8 +51,23 @@
           <label>Look up an IP address <input name="ip" required /></label
           ><button>Look up</button>
         </form>
-      </main></noscript
-    >
+        <h2>IP lookup for developers and agents</h2>
+        <p>
+          Use <code>GET /1.1.1.1/json</code> for a specific IP, or
+          <code>GET /json</code> for your connection. Without an explicit
+          address, an agent gets its own server's IP.
+        </p>
+        <p>
+          <a href="/docs">API reference</a> · <a href="/docs.md">Markdown</a> ·
+          <a href="/openapi.json">OpenAPI</a> ·
+          <a href="/llms.txt">Agent index</a>
+        </p>
+        <p>
+          Made by <a href="https://github.com/ali-master">Ali Torki</a> ·
+          <a href="https://linkedin.com/in/alitorki">LinkedIn</a>
+        </p>
+      </main>
+    </div>
     <script type="module" src="./main.tsx"></script>
   </body>
 </html>

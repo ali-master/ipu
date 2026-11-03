@@ -609,6 +609,12 @@ function App() {
               <p className="developer-note">
                 No API key required. Just a request away.
               </p>
+              <p className="developer-note">
+                <a href="/docs">API reference</a> ·{" "}
+                <a href="/docs.md">Markdown</a> ·{" "}
+                <a href="/openapi.json">OpenAPI</a> ·{" "}
+                <a href="/llms.txt">Agent index</a>
+              </p>
             </div>
             <div className="terminal-panel" data-ui>
               <div className="terminal-title">

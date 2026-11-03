@@ -338,3 +338,55 @@ test("HTML without JavaScript retains usable lookup links and form", async ({
   await expect(page.locator("body")).toContainText('"ip":"1.1.1.1"');
   await context.close();
 });
+
+test("built pages expose metadata, social assets and mobile documentation without JavaScript", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    baseURL,
+    viewport: { width: 320, height: 720 },
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page).toHaveTitle(
+    "IPU — IP address lookup, location & network info",
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://ipu.usestrict.dev/",
+  );
+  const schema = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').innerText(),
+  );
+  expect(schema["@graph"][0].name).toBe("IPU");
+  for (const [path, type] of [
+    ["/social-preview.png", "image/png"],
+    ["/logo.svg", "image/svg+xml"],
+  ]) {
+    const asset = await context.request.get(path!);
+    expect(asset.status()).toBe(200);
+    expect(asset.headers()["content-type"]).toBe(type);
+    expect(asset.headers()["cache-control"]).not.toContain("immutable");
+  }
+  await page.getByRole("link", { name: "API reference", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "IPU API reference", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://ipu.usestrict.dev/docs",
+  );
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  await page.getByRole("link", { name: "Markdown", exact: true }).click();
+  await expect(page.locator("body")).toContainText("# IPU API reference");
+  await context.close();
+});

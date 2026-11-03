@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import type { Lookup } from "./lookup";
 import { normalizeIP } from "./lookup";
 import type { IPInfo } from "./shared";
+import { discoveryLinks, documents } from "./discovery";
 
 export function textSummary(data: IPInfo): string {
   return (
@@ -24,7 +25,9 @@ export function createApp(options: {
     const url = new URL(request.url);
     const headers = new Headers({
       "Cache-Control": "private, no-store",
-      Vary: "Accept, User-Agent",
+      Vary: "Accept",
+      Link: discoveryLinks,
+      "X-Robots-Tag": "noindex",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
     });
@@ -47,13 +50,31 @@ export function createApp(options: {
         {
           headers: {
             "Content-Type": asset.body.type,
-            "Cache-Control": "public, max-age=31536000, immutable",
+            "Cache-Control": ["/logo.svg", "/social-preview.png"].includes(
+              url.pathname,
+            )
+              ? "public, max-age=3600"
+              : "public, max-age=31536000, immutable",
             "X-Content-Type-Options": "nosniff",
             Vary: "Accept-Encoding",
             ...(gzip ? { "Content-Encoding": "gzip" } : {}),
           },
         },
       );
+    }
+    const document = documents.get(url.pathname);
+    if (document) {
+      headers.set("Content-Type", document.type);
+      headers.set("Cache-Control", "public, max-age=3600");
+      if (url.pathname === "/docs") headers.delete("X-Robots-Tag");
+      if (url.pathname === "/docs.md")
+        headers.append(
+          "Link",
+          '<https://ipu.usestrict.dev/docs>; rel="canonical"',
+        );
+      return new Response(request.method === "HEAD" ? null : document.body, {
+        headers,
+      });
     }
     if (url.pathname === "/health")
       return request.method === "HEAD"
@@ -88,20 +109,23 @@ export function createApp(options: {
       );
     }
     const ip = explicit ?? options.clientIP(request);
-    if (!ip)
+    const accepts = request.headers.get("accept") ?? "";
+    const browser = accepts.includes("text/html");
+    if (!ip && !(route === "/" && browser))
       return Response.json(
         { error: "Could not resolve the client IP." },
         { status: 503, headers },
       );
-    const result = options.lookup(ip);
-    headers.set(
-      "Server-Timing",
-      `lookup;dur=${result.meta.lookup_ms.toFixed(3)}`,
-    );
-    headers.set("X-IPU-Cache", result.meta.cached ? "HIT" : "MISS");
-    const accepts = request.headers.get("accept") ?? "";
-    const browser = accepts.includes("text/html");
+    const result = ip ? options.lookup(ip) : null;
+    if (result) {
+      headers.set(
+        "Server-Timing",
+        `lookup;dur=${result.meta.lookup_ms.toFixed(3)}`,
+      );
+      headers.set("X-IPU-Cache", result.meta.cached ? "HIT" : "MISS");
+    }
     if (route === "/" && browser) {
+      if (!explicit && !url.search) headers.delete("X-Robots-Tag");
       const bootstrap = JSON.stringify(result).replace(/</g, "\\u003c");
       headers.set("Content-Type", "text/html; charset=utf-8");
       headers.set(
@@ -115,6 +139,7 @@ export function createApp(options: {
         { headers },
       );
     }
+    if (!result) throw new Error("Lookup result required for data endpoints.");
     if (route === "/json" || accepts.includes("application/json")) {
       headers.set("Content-Type", "application/json; charset=utf-8");
       return new Response(

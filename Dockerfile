@@ -9,6 +9,7 @@ RUN --mount=type=cache,target=/root/.bun/install/cache,sharing=locked \
 
 COPY tsconfig.json bunfig.toml ./
 COPY src ./src
+COPY assets/logo.svg assets/social-preview.png ./assets/
 COPY scripts/build.ts ./scripts/build.ts
 RUN bun check \
     && bun run build \
