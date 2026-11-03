@@ -322,10 +322,14 @@ for (const width of [320, 390, 768, 1440]) {
 
 test("HTML without JavaScript retains usable lookup links and form", async ({
   browser,
+  baseURL,
 }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    baseURL,
+  });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:3011/");
+  await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "IPU — IP, meet you." }),
   ).toBeVisible();
