@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">IPU</title>
+  <desc id="desc">A sculpted U representing you, with a floating brass location point.</desc>
+  <style>
+    .mark { fill: #161715; }
+    .point { fill: #9a852a; }
+    @media (prefers-color-scheme: dark) {
+      .mark { fill: #ecece5; }
+      .point { fill: #c5b84a; }
+    }
+  </style>
+  <circle class="point" cx="256" cy="86" r="42" />
+  <path class="mark" d="M80 150 137 170C161 179 170 193 170 210V316C170 372 202 404 256 404S342 372 342 316V210C342 193 351 179 375 170L432 150V316C432 424 365 488 256 488S80 424 80 316Z" />
+</svg>
