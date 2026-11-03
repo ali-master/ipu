@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="IP, meet you. Discover your IP address, network, ASN and approximate location instantly. A fast, private IP lookup for people and terminals."
+    />
+    <meta name="theme-color" content="#161715" />
+    <title>IPU — IP, meet you.</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      try {
+        document.documentElement.classList.toggle(
+          "dark",
+          (localStorage.getItem("ipu-theme") ||
+            (matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light")) === "dark",
+        );
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <script id="ipu-data" type="application/json">
+      __IPU_BOOTSTRAP__
+    </script>
+    <div id="root"></div>
+    <noscript
+      ><main style="padding: 32px; font-family: system-ui">
+        <h1>IPU — IP, meet you.</h1>
+        <p>Your network, without the guesswork.</p>
+        <p>
+          <a href="/json">View your IP and location as JSON</a> ·
+          <a href="/ip">Your IP address</a>
+        </p>
+        <form action="/json">
+          <label>Look up an IP address <input name="ip" required /></label
+          ><button>Look up</button>
+        </form>
+      </main></noscript
+    >
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>
