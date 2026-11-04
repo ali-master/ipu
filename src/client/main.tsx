@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
 import { JsonCode } from "@/components/json-code";
+import { CloudflareTrace } from "@/components/cloudflare-trace";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { IPInfo, LookupResult } from "../shared";
@@ -600,7 +601,7 @@ function App() {
                       <span className="privacy-symbol">U</span>
                       <h4>Just the essentials.</h4>
                       <p>
-                        No account. No third-party lookup requests. Your results
+                        No account. IP lookups run on this server. Your results
                         stay in temporary memory.
                       </p>
                     </div>
@@ -619,6 +620,7 @@ function App() {
                 </div>
               </TabsContent>
             </Tabs>
+            <CloudflareTrace />
           </section>
 
           <div className="globe-stage">

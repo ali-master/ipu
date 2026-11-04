@@ -4,6 +4,8 @@ IPU looks up IPv4 and IPv6 addresses and returns network, ASN and approximate lo
 
 Base URL: **{{SITE_URL}}**
 
+The website also requests `https://cloudflare.com/cdn-cgi/trace` directly from your browser. Its Cloudflare trace describes your own connection, even while viewing another IP. It is separate from the lookup API and stays in page memory until refreshed or closed.
+
 ## Quick start
 
 ```sh

@@ -205,9 +205,9 @@ test("boot data, theme, live lookup, JSON, clipboard and browser cache", async (
   await expect(page.locator(".ip-address")).toContainText("1.1.1.1");
   await expect(page.locator(".network-feature")).toContainText("AS13335");
   await page.getByRole("tab", { name: "JSON", exact: true }).click();
-  await expect(page.locator(".json-panel pre")).toContainText(
-    '"ip": "1.1.1.1"',
-  );
+  await expect(
+    page.getByRole("tabpanel", { name: "JSON", exact: true }).locator("pre"),
+  ).toContainText('"ip": "1.1.1.1"');
   await page.getByRole("button", { name: "Copy JSON", exact: true }).click();
   expect(
     JSON.parse(await page.evaluate(() => navigator.clipboard.readText())).asn,
