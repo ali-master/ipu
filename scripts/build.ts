@@ -1,5 +1,4 @@
 import tailwind from "bun-plugin-tailwind";
-import { metadata } from "../src/discovery";
 const result = await Bun.build({
   entrypoints: ["src/client/index.html"],
   outdir: "dist",
@@ -16,11 +15,6 @@ const result = await Bun.build({
 });
 if (!result.success)
   throw new AggregateError(result.logs, "Frontend build failed");
-const html = Bun.file("dist/index.html");
-await Bun.write(
-  html,
-  (await html.text()).replace("<!-- IPU_METADATA -->", metadata()),
-);
 const brand = ["logo.svg", "social-preview.png"];
 for (const name of brand)
   await Bun.write(`dist/${name}`, Bun.file(`assets/${name}`));

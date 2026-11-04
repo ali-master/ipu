@@ -2,14 +2,14 @@
 
 IPU looks up IPv4 and IPv6 addresses and returns network, ASN and approximate location data. No account or API key is required. All endpoints are read-only and support GET and HEAD.
 
-Base URL: **https://ipu.usestrict.dev**
+Base URL: **{{SITE_URL}}**
 
 ## Quick start
 
 ```sh
-curl https://ipu.usestrict.dev/1.1.1.1/json
-curl https://ipu.usestrict.dev/2606:4700:4700::1111/country
-curl https://ipu.usestrict.dev/ip
+curl {{SITE_URL}}/1.1.1.1/json
+curl {{SITE_URL}}/2606:4700:4700::1111/country
+curl {{SITE_URL}}/ip
 ```
 
 For agents, use `/{ip}/json` for one complete response, or a focused endpoint when only one field is needed. Pass the user's IP explicitly: without an IP, the result describes the caller's connection (for an agent, usually its server), not the user's device.
@@ -74,9 +74,9 @@ Implementation reference (checked November 3, 2026): [Chrome Imperative API](htt
 
 ### HTTP discovery
 
-- [OpenAPI schema](https://ipu.usestrict.dev/openapi.json)
-- [Compact agent index](https://ipu.usestrict.dev/llms.txt)
-- [IPU home](https://ipu.usestrict.dev/)
+- [OpenAPI schema]({{SITE_URL}}/openapi.json)
+- [Compact agent index]({{SITE_URL}}/llms.txt)
+- [IPU home]({{SITE_URL}}/)
 - [Source code](https://github.com/ali-master/ipu)
 
 Created by [Ali Torki](https://github.com/ali-master) · [LinkedIn](https://linkedin.com/in/alitorki)

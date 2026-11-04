@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createApp } from "../../src/app";
-import { documents, metadata, siteURL } from "../../src/discovery";
+import { documents, siteURL } from "../../src/discovery";
 import { openapi } from "../../src/openapi";
 
 const app = createApp({
@@ -8,15 +8,38 @@ const app = createApp({
     throw new Error("Public documents must not perform a lookup");
   },
   clientIP: () => null,
-  html: (await Bun.file("src/client/index.html").text()).replace(
-    "<!-- IPU_METADATA -->",
-    metadata(),
-  ),
+  html: await Bun.file("src/client/index.html").text(),
 });
 const get = (path: string, method = "GET", headers = {}) =>
   app.handle(new Request(`http://localhost${path}`, { method, headers }));
 
 describe("Search and agent discovery", () => {
+  test("all discovery surfaces use the configured origin", async () => {
+    for (const path of [
+      "/docs",
+      "/docs.md",
+      "/robots.txt",
+      "/sitemap.xml",
+      "/llms.txt",
+    ]) {
+      const body = await (await get(path)).text();
+      expect(body).toContain(siteURL);
+      expect(body).not.toContain("{{SITE_URL}}");
+    }
+    const schema = await (await get("/openapi.json")).json();
+    expect(schema.servers).toEqual([{ url: siteURL }]);
+    expect(schema.externalDocs.url).toBe(`${siteURL}/docs`);
+    expect((await get("/docs.md")).headers.get("link")).toContain(
+      `<${siteURL}/docs>; rel="canonical"`,
+    );
+    const html = await (
+      await get("/", "GET", { accept: "text/html", host: "untrusted.example" })
+    ).text();
+    expect(html).toContain(`content="${siteURL}/social-preview.png"`);
+    expect(html).not.toContain("<!-- IPU_METADATA -->");
+    expect(html).not.toContain("untrusted.example");
+  });
+
   test("public documents work without a client IP, support HEAD and expose discovery links", async () => {
     for (const [path, document] of documents) {
       const response = await get(path);
@@ -72,7 +95,12 @@ describe("Search and agent discovery", () => {
       [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]),
     ).toEqual([`${siteURL}/`, `${siteURL}/docs`]);
     const robots = await (await get("/robots.txt")).text();
-    expect(robots).toBe(await Bun.file("public/robots.txt").text());
+    expect(robots).toBe(
+      (await Bun.file("public/robots.txt").text()).replaceAll(
+        "{{SITE_URL}}",
+        siteURL,
+      ),
+    );
     expect(robots).toContain("User-agent: *\nAllow: /");
     expect(robots).toContain(`${siteURL}/sitemap.xml`);
     expect((await get("/docs.md")).headers.get("link")).toContain(

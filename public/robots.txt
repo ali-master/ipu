@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ipu.usestrict.dev/sitemap.xml
+Sitemap: {{SITE_URL}}/sitemap.xml

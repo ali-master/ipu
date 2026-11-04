@@ -355,7 +355,7 @@ test("built pages expose metadata, social assets and mobile documentation withou
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://ipu.usestrict.dev/",
+    "https://ipu.example/",
   );
   const schema = JSON.parse(
     await page.locator('script[type="application/ld+json"]').innerText(),
@@ -376,7 +376,7 @@ test("built pages expose metadata, social assets and mobile documentation withou
   ).toBeVisible();
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://ipu.usestrict.dev/docs",
+    "https://ipu.example/docs",
   );
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme });

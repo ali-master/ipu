@@ -16,7 +16,7 @@ bun run build
 bun start
 ```
 
-For configuration, see [.env.example](.env.example). Behind a reverse proxy, set `TRUSTED_PROXIES` to its actual IPs/CIDRs.
+For configuration, see [.env.example](.env.example). Set `SITE_URL` to your public origin (for example, `https://ipu.usestrict.dev`); restart the server to update SEO and discovery links. Behind a reverse proxy, set `TRUSTED_PROXIES` to its actual IPs/CIDRs.
 
 ## Docker
 

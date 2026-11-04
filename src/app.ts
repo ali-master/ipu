@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import type { Lookup } from "./lookup";
 import { normalizeIP } from "./lookup";
 import type { IPInfo } from "./shared";
-import { discoveryLinks, documents } from "./discovery";
+import { discoveryLinks, documents, metadata, siteURL } from "./discovery";
 
 export function textSummary(data: IPInfo): string {
   return (
@@ -22,6 +22,7 @@ export function createApp(options: {
   originTrialToken?: string;
   assets?: Map<string, { body: Blob; gzip: Blob }>;
 }) {
+  const html = options.html.replace("<!-- IPU_METADATA -->", () => metadata());
   return new Elysia().all("/*", ({ request }) => {
     const url = new URL(request.url);
     const headers = new Headers({
@@ -70,10 +71,7 @@ export function createApp(options: {
       headers.set("Cache-Control", "public, max-age=3600");
       if (url.pathname === "/docs") headers.delete("X-Robots-Tag");
       if (url.pathname === "/docs.md")
-        headers.append(
-          "Link",
-          '<https://ipu.usestrict.dev/docs>; rel="canonical"',
-        );
+        headers.append("Link", `<${siteURL}/docs>; rel="canonical"`);
       return new Response(request.method === "HEAD" ? null : document.body, {
         headers,
       });
@@ -139,7 +137,7 @@ export function createApp(options: {
       return new Response(
         request.method === "HEAD"
           ? null
-          : options.html.replace("__IPU_BOOTSTRAP__", () => bootstrap),
+          : html.replace("__IPU_BOOTSTRAP__", () => bootstrap),
         { headers },
       );
     }

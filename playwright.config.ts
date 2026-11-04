@@ -5,7 +5,8 @@ export default defineConfig({
   fullyParallel: true,
   use: { baseURL: "http://127.0.0.1:3011", trace: "retain-on-failure" },
   webServer: {
-    command: "PORT=3011 HOST=127.0.0.1 bun src/index.ts",
+    command:
+      "SITE_URL=https://ipu.example PORT=3011 HOST=127.0.0.1 bun src/index.ts",
     url: "http://127.0.0.1:3011/health",
     reuseExistingServer: false,
   },

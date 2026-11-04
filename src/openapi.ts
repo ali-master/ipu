@@ -1,3 +1,4 @@
+import { siteURL } from "./config";
 import type { IPInfo } from "./shared";
 
 const nullableString = { type: ["string", "null"] };
@@ -146,8 +147,8 @@ export const openapi = {
     description:
       "Read-only IPv4 and IPv6 network, ASN and approximate geolocation lookup. No API key. Missing JSON fields are null; plain text uses Unavailable. Omitted IP means the caller's connection, not the end user's device.",
   },
-  servers: [{ url: "https://ipu.usestrict.dev" }],
-  externalDocs: { url: "https://ipu.usestrict.dev/docs" },
+  servers: [{ url: siteURL }],
+  externalDocs: { url: `${siteURL}/docs` },
   security: [],
   paths,
   components: {

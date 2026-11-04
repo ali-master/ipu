@@ -1,8 +1,11 @@
-import guide from "./content/api.md" with { type: "text" };
+import guideTemplate from "./content/api.md" with { type: "text" };
 import robots from "../public/robots.txt" with { type: "text" };
 import { openapi } from "./openapi";
 
-export const siteURL = "https://ipu.usestrict.dev";
+import { siteURL } from "./config";
+export { siteURL } from "./config";
+
+const guide = guideTemplate.replaceAll("{{SITE_URL}}", siteURL);
 export const description =
   "Find your IP address, network CIDR, ASN and approximate location. Look up IPv4 or IPv6 in your browser or use IPU's free JSON API. No API key required.";
 
@@ -106,7 +109,7 @@ export const documents = new Map([
     "/robots.txt",
     {
       type: "text/plain; charset=utf-8",
-      body: robots,
+      body: robots.replaceAll("{{SITE_URL}}", siteURL),
     },
   ],
   [
