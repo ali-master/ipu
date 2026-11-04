@@ -1,6 +1,16 @@
 import ipaddr from "ipaddr.js";
 import { normalizeIP } from "./lookup";
 
+export function vercelClientIP(request: Request): string | null {
+  // Trust this platform-owned header only inside the Vercel deployment.
+  if (Bun.env.VERCEL !== "1") return null;
+  try {
+    return normalizeIP(request.headers.get("x-vercel-forwarded-for") ?? "");
+  } catch {
+    return null;
+  }
+}
+
 export function createClientResolver(trusted = "") {
   const networks = trusted
     .split(",")

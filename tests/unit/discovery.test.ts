@@ -96,7 +96,7 @@ describe("Search and agent discovery", () => {
     ).toEqual([`${siteURL}/`, `${siteURL}/docs`]);
     const robots = await (await get("/robots.txt")).text();
     expect(robots).toBe(
-      (await Bun.file("public/robots.txt").text()).replaceAll(
+      (await Bun.file("src/content/robots.txt").text()).replaceAll(
         "{{SITE_URL}}",
         siteURL,
       ),

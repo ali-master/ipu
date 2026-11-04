@@ -28,6 +28,8 @@ docker compose up -d --build --wait
 
 Set `PORT=3300` if port 3000 is already in use. `HOST` controls the host bind address; the container listens on port 3000.
 
+For Vercel, see the [deployment guide](docs/vercel.md).
+
 ## API
 
 ```sh

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "elysia",
+  "bunVersion": "1.4.x",
+  "installCommand": "bun install --frozen-lockfile",
+  "buildCommand": "bun scripts/build-vercel.ts",
+  "functions": {
+    "app.ts": {
+      "includeFiles": "{dist/**,assets/*.mmdb,src/content/**}"
+    }
+  }
+}

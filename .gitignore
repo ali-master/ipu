@@ -41,6 +41,7 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 /dist/
+/public/
 /test-results/
 /playwright-report/
 /.taste-skill/

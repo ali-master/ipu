@@ -1,5 +1,5 @@
 import guideTemplate from "./content/api.md" with { type: "text" };
-import robots from "../public/robots.txt" with { type: "text" };
+import robots from "./content/robots.txt" with { type: "text" };
 import { openapi } from "./openapi";
 
 import { siteURL } from "./config";

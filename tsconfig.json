@@ -12,5 +12,5 @@
     "types": ["bun-types", "webmcp-types"],
     "paths": { "@/*": ["./src/client/*"] }
   },
-  "include": ["src", "scripts", "tests", "playwright.config.ts"]
+  "include": ["app.ts", "src", "scripts", "tests", "playwright.config.ts"]
 }
