@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ipu",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["PORT=3017", "HOST=127.0.0.1", "bun", "src/index.ts"],
+      "port": 3017
+    }
+  ]
+}
