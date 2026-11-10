@@ -1017,6 +1017,9 @@ dl {
   gap: 4px 20px;
   margin-top: 12px;
 }
+.footer-credit + .footer-credit {
+  margin-top: 0;
+}
 .footer-credit > span {
   color: var(--muted-foreground);
 }

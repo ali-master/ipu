@@ -8,10 +8,11 @@
 
 ## Run
 
-Requires **Bun 1.4.4+**. Place `GeoLite2-City-2026-06-05.mmdb` in `assets/`; add `GeoLite2-ASN.mmdb` for ASN details. See [database sources](assets/README.md).
+Requires **Bun 1.4.4+**. `build:db` builds the IP databases from public sources into `assets/` (about 270 MB of downloads, cached); run it again whenever you want fresher data. See [database sources](assets/README.md).
 
 ```sh
 bun install --frozen-lockfile
+bun run build:db
 bun run build
 bun start
 ```

@@ -26,9 +26,8 @@ export async function prepareDatabase(
 }
 
 if (import.meta.main) {
-  const cityPath =
-    Bun.env.MAXMIND_CITY_DB || "assets/GeoLite2-City-2026-06-05.mmdb";
-  const asnPath = Bun.env.MAXMIND_ASN_DB || "assets/GeoLite2-ASN.mmdb";
+  const cityPath = Bun.env.MAXMIND_CITY_DB || "assets/ipu-city.mmdb";
+  const asnPath = Bun.env.MAXMIND_ASN_DB || "assets/ipu-asn.mmdb";
   for (const path of [cityPath, asnPath]) {
     if (!/^assets\/[^/\\]+\.mmdb$/.test(path))
       throw new Error(

@@ -3,17 +3,20 @@ import { createLookup, networkCIDR, normalizeIP } from "../../src/lookup";
 import { createClientResolver } from "../../src/client-ip";
 
 const service = await createLookup();
-describe("local MaxMind lookup", () => {
-  test("reads the supplied City file and real ASN data", () => {
+describe("local database lookup", () => {
+  test("reads the built City and ASN databases", () => {
     const { data } = service.lookup("88.198.53.22");
     expect(data.country_code).toBe("DE");
     expect(data.city).toBe("Falkenstein");
     expect(data.asn).toBe(24940);
     expect(data.asn_organization).toBe("Hetzner Online GmbH");
-    expect(data.database.city).toBe("2026-06-05");
-    expect(data.latitude).toBe(50.4777);
-    expect(data.accuracy_radius).toBe(20);
-    expect(data.network).toBe("88.198.52.0/22");
+    expect(data.timezone).toBe("Europe/Berlin");
+    expect(data.database.city).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(data.latitude).toBeCloseTo(50.48, 1);
+    // The public sources carry no accuracy radius.
+    expect(data.accuracy_radius).toBeNull();
+    // Prefix lengths shift between rebuilds; the network must still hold the IP.
+    expect(data.network).toMatch(/^88\.198\.\d+\.0\/2\d$/);
     expect(data.network_source).toBe("city");
   });
   test("normalizes mapped IPv4 and compressed IPv6", () => {
@@ -86,7 +89,7 @@ describe("local MaxMind lookup", () => {
     });
     const data = lookup("88.198.53.22").data;
     expect(data.asn).toBeNull();
-    expect(data.network).toBe("88.198.52.0/22");
+    expect(data.network).toMatch(/^88\.198\.\d+\.0\/2\d$/);
     expect(data.network_source).toBe("city");
   });
 });

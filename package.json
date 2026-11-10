@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "bun run build && bun --watch src/index.ts",
     "build": "bun scripts/build.ts",
+    "build:db": "bun scripts/build-ip-db.ts",
     "start": "bun src/index.ts",
     "test": "bun test",
     "typecheck": "bun check",

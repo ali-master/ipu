@@ -11,7 +11,7 @@ Set these environment variables before the first deployment:
 | `MAXMIND_ASN_DB_URL`        | Optional direct HTTPS download URL for the ASN `.mmdb` file. Without it, ASN fields are `null`.                          |
 | `WEBMCP_ORIGIN_TRIAL_TOKEN` | Optional token issued for the deployed origin.                                                                           |
 
-Use a trusted file host or a signed download URL that remains valid during the build. URLs must return raw MMDB bytes, not an HTML page or a compressed archive. Downloads run at build time, not during user requests. Existing local files are reused; downloaded files are validated before the build succeeds. Keep database URLs in Vercel environment settings, not in Git.
+Build the two files locally with `bun run build:db` and upload `assets/ipu-city.mmdb` and `assets/ipu-asn.mmdb` to your file host. Use a trusted file host or a signed download URL that remains valid during the build. URLs must return raw MMDB bytes, not an HTML page or a compressed archive. Downloads run at build time, not during user requests. Existing local files are reused; downloaded files are validated before the build succeeds. Keep database URLs in Vercel environment settings, not in Git.
 
 Leave `MAXMIND_CITY_DB` and `MAXMIND_ASN_DB` at their defaults, or point them to `.mmdb` files directly inside `assets/`. `PORT`, `HOST` and `TRUSTED_PROXIES` are not needed on Vercel. The dedicated entrypoint uses Vercel's protected `x-vercel-forwarded-for` header; local and Docker execution retain their existing trusted-proxy rules.
 

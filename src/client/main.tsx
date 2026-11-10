@@ -774,6 +774,24 @@ function App() {
               GitHub <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           </div>
+          {/* Required by the data licences: DB-IP Lite (CC BY 4.0) and GeoLite2. */}
+          <div className="footer-credit">
+            <span>IP geolocation by</span>
+            <a
+              href="https://db-ip.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              DB-IP <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
+            <a
+              href="https://www.maxmind.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              MaxMind GeoLite2 <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </footer>
     </>

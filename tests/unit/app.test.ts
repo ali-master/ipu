@@ -136,7 +136,7 @@ describe("HTTP contract", () => {
     expect((await get("/json?ip=nope")).status).toBe(400);
     expect((await get("/json?ip=")).status).toBe(400);
     expect((await get("/favicon-nope.ico")).status).toBe(404);
-    expect((await get("/assets/GeoLite2-ASN.mmdb")).status).toBe(404);
+    expect((await get("/assets/ipu-asn.mmdb")).status).toBe(404);
     expect(
       (
         await app.handle(

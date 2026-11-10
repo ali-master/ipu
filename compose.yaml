@@ -13,8 +13,8 @@ services:
       SITE_URL: "${SITE_URL:-}"
       HOST: 0.0.0.0
       PORT: "3000"
-      MAXMIND_CITY_DB: "${MAXMIND_CITY_DB:-assets/GeoLite2-City-2026-06-05.mmdb}"
-      MAXMIND_ASN_DB: "${MAXMIND_ASN_DB:-assets/GeoLite2-ASN.mmdb}"
+      MAXMIND_CITY_DB: "${MAXMIND_CITY_DB:-assets/ipu-city.mmdb}"
+      MAXMIND_ASN_DB: "${MAXMIND_ASN_DB:-assets/ipu-asn.mmdb}"
       TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
       WEBMCP_ORIGIN_TRIAL_TOKEN: "${WEBMCP_ORIGIN_TRIAL_TOKEN:-}"
     volumes:

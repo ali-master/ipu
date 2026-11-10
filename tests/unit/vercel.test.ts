@@ -43,9 +43,7 @@ test("database preparation checks missing inputs, HTTP errors and MMDB types", a
       prepareDatabase(path, "https://example.test/db", "City"),
     ).rejects.toThrow("404");
     expect(await Bun.file(path).exists()).toBe(false);
-    download.mockResolvedValue(
-      new Response(Bun.file("assets/GeoLite2-ASN.mmdb")),
-    );
+    download.mockResolvedValue(new Response(Bun.file("assets/ipu-asn.mmdb")));
     await prepareDatabase(path, "https://example.test/db", "ASN");
     await expect(prepareDatabase(path, undefined, "City")).rejects.toThrow(
       "Expected a City",

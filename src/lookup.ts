@@ -24,12 +24,10 @@ export async function createLookup(
   } = {},
 ) {
   const city = await open<CityResponse>(
-    options.cityPath ??
-      Bun.env.MAXMIND_CITY_DB ??
-      "assets/GeoLite2-City-2026-06-05.mmdb",
+    options.cityPath ?? Bun.env.MAXMIND_CITY_DB ?? "assets/ipu-city.mmdb",
   );
   const asnPath =
-    options.asnPath ?? Bun.env.MAXMIND_ASN_DB ?? "assets/GeoLite2-ASN.mmdb";
+    options.asnPath ?? Bun.env.MAXMIND_ASN_DB ?? "assets/ipu-asn.mmdb";
   const asn = (await Bun.file(asnPath).exists())
     ? await open<AsnResponse>(asnPath)
     : null;
